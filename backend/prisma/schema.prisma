@@ -17,3 +17,10 @@ model User {
 
   @@map("users")
 }
+
+model Organization{
+  id String @id @default(uuid())
+  name String @unique
+  admin String 
+  @@map("organizations")
+}
