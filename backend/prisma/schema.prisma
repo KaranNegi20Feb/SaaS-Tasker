@@ -7,20 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  MEMBER
+}
+
 model User {
-  id        String @id @default(uuid())
-  firstName String @map("first_name")
-  lastName  String @map("last_name")
-  email     String @unique
+  id        String         @id @default(uuid())
+  firstName String         @map("first_name")
+  lastName  String         @map("last_name")
+  email     String         @unique
   password  String
   salt      String
+
+  memberships Membership[] // A user can be part of multiple organizations
 
   @@map("users")
 }
 
-model Organization{
-  id String @id @default(uuid())
-  name String @unique
-  admin String 
+model Organization {
+  id    String         @id @default(uuid())
+  name  String         @unique
+  memberships Membership[] // An organization can have multiple users (via membership)
+
   @@map("organizations")
+}
+
+model Membership {
+  id              String       @id @default(uuid())
+  user            User         @relation(fields: [userId], references: [id])
+  userId          String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  organizationId  String
+  role            Role         // Only 'ADMIN' or 'MEMBER'
+
+  @@unique([userId, organizationId]) // prevent duplicate entries
 }
