@@ -1,21 +1,26 @@
 import express from "express";
-import {expressMiddleware} from "@apollo/server/express4";
+import cors from 'cors';
+import { expressMiddleware } from "@apollo/server/express4";
 import createApolloGraphqlServer from "./graphql";
- 
-async function init(){
+
+async function init() {
     const app = express();
-    app.use(express.json())
+    app.use(cors({
+        origin: 'http://localhost:5173',
+        credentials: true,
+    }));
 
-    app.get('/', (req,res)=>{
-    res.json({message:"Server is up and running"})
-    })
+    app.use(express.json());
 
-    app.use("/graphql",expressMiddleware(await createApolloGraphqlServer()))
- 
+    app.get('/', (req, res) => {
+        res.json({ message: "Server is up and running" });
+    });
 
-    app.listen(3000,()=>{
-        console.log(`server running `)
-    })
+    app.use("/graphql", expressMiddleware(await createApolloGraphqlServer()));
+
+    app.listen(3000, () => {
+        console.log(`🚀 Server running at http://localhost:3000/graphql`);
+    });
 }
 
-init()
+init();
