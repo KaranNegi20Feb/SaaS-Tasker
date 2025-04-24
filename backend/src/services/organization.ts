@@ -15,6 +15,14 @@ class OrganizationServices{
             }
         });
     }
+    public static getAllOrganizations(){
+        return prismaClient.organization.findMany({
+            select:{
+                name:true,
+                admin:true
+            }
+        })
+    }
 }
 
 export default OrganizationServices

@@ -5,6 +5,8 @@ import { Organization } from "./organization";
 async function createApolloGraphqlServer(){
  const myserver=new ApolloServer({
          typeDefs:`
+            ${User.typeDefs}
+            ${Organization.typeDefs}
              type Query{
                ${User.queries}
                ${Organization.queries}
@@ -17,6 +19,7 @@ async function createApolloGraphqlServer(){
          resolvers:{
              Query:{
                 ...User.resolvers.queries,
+                ...Organization.resolvers.queries
              },
              Mutation:{
                 ...User.resolvers.mutations,

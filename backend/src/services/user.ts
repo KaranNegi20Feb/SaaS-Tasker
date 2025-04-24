@@ -51,5 +51,16 @@ class UserServices{
         return token
     }
 
+    public static async getAllUsers(){
+        return prismaClient.user.findMany({
+            select:{
+                id:true,
+                firstName:true,
+                lastName:true,
+                email:true
+            },
+        });
+    }
+
 } 
 export default UserServices;

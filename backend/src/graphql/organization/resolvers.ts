@@ -4,7 +4,13 @@ const mutations={
     createOrganization:async(_:any, payload:CreateOrganizationPayload)=>{
         const result=await OrganizationServices.createOrganization(payload)
         return result.name
+    },
+}
+
+const queries={
+    getAllOrganizations: async () => {
+        return await OrganizationServices.getAllOrganizations();
     }
 }
-export const resolvers={mutations}
+export const resolvers={mutations,queries}
 

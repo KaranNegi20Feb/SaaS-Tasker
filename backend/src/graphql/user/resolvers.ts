@@ -8,6 +8,9 @@ const queries={
             password:payload.password
         })
         return token
+    },
+    getAllUsers: async () => {
+        return await UserServices.getAllUsers();
     }
 }
 
@@ -15,7 +18,7 @@ const mutations={
     createUser:async(_: any, payload:CreateUserPayload)=>{
         const res=await UserServices.createUser(payload);
         return res.id; 
-    },
+    }
 };
 
 export const resolvers={queries,mutations}
