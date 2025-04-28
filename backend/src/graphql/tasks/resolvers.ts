@@ -7,7 +7,9 @@ const mutation={
 }
 
 const queries={
-
+    getAllTasks: async () => {
+        return await TaskService.getAllTasks();
+    }
 }
 
 export const resolvers={mutation,queries}

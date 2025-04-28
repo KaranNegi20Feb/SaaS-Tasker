@@ -12,6 +12,7 @@ async function createApolloGraphqlServer(){
              type Query{
                ${User.queries}
                ${Organization.queries}
+               ${Task.queries}
              }
              type Mutation{
                 ${User.mutations}
@@ -22,7 +23,8 @@ async function createApolloGraphqlServer(){
          resolvers:{
              Query:{
                 ...User.resolvers.queries,
-                ...Organization.resolvers.queries
+                ...Organization.resolvers.queries,
+                ...Task.resolvers.queries
              },
              Mutation:{
                 ...User.resolvers.mutations,
