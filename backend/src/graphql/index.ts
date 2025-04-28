@@ -1,11 +1,13 @@
 import { ApolloServer } from "@apollo/server";
 import { User } from "./user";
 import { Organization } from "./organization";
+import { Task } from "./tasks";
 
 async function createApolloGraphqlServer(){
  const myserver=new ApolloServer({
          typeDefs:`
             ${User.typeDefs}
+            ${Task.typedefs}
             ${Organization.typeDefs}
              type Query{
                ${User.queries}
@@ -13,6 +15,7 @@ async function createApolloGraphqlServer(){
              }
              type Mutation{
                 ${User.mutations}
+                ${Task.mutation}
                 ${Organization.mutations}
              }
          `,
@@ -23,7 +26,8 @@ async function createApolloGraphqlServer(){
              },
              Mutation:{
                 ...User.resolvers.mutations,
-                ...Organization.resolvers.mutations
+                ...Organization.resolvers.mutations,
+                ...Task.resolvers.mutation
              },
          }
      })
