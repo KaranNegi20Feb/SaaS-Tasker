@@ -7,39 +7,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  MEMBER
-}
-
 model User {
-  id        String         @id @default(uuid())
-  firstName String         @map("first_name")
-  lastName  String         @map("last_name")
-  email     String         @unique
-  password  String
-  salt      String
+  id             String           @id @default(uuid())
+  firstName      String
+  lastName       String
+  email          String           @unique
+  password       String
+  salt           String           // <<== Added back
 
-  memberships Membership[] // A user can be part of multiple organizations
+  organizations  Organization[]   @relation("UserOrganizations")
+  tasks          Task[]
 
   @@map("users")
 }
 
 model Organization {
-  id    String         @id @default(uuid())
-  name  String         @unique
-  memberships Membership[] // An organization can have multiple users (via membership)
+  id     String   @id @default(uuid())
+  name   String
+
+  users  User[]   @relation("UserOrganizations")
+  tasks  Task[]
 
   @@map("organizations")
 }
 
-model Membership {
-  id              String       @id @default(uuid())
-  user            User         @relation(fields: [userId], references: [id])
-  userId          String
-  organization    Organization @relation(fields: [organizationId], references: [id])
-  organizationId  String
-  role            Role         // Only 'ADMIN' or 'MEMBER'
+model Task {
+  id              String         @id @default(uuid())
+  title           String
+  description     String
+  userId          String?         // Optional: Task may belong to a User
+  organizationId  String          // Must belong to an Organization
 
-  @@unique([userId, organizationId]) // prevent duplicate entries
+  user            User?           @relation(fields: [userId], references: [id])
+  organization    Organization    @relation(fields: [organizationId], references: [id])
+
+  @@map("tasks")
 }

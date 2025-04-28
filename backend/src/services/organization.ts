@@ -2,16 +2,14 @@ import { prismaClient } from "../lib/db";
 
 export interface CreateOrganizationPayload{
     name:string,
-    admin:string
 }
 
 class OrganizationServices{
     public static createOrganization(payload:CreateOrganizationPayload){
-        const {name,admin}=payload;
+        const {name}=payload;
         return prismaClient.organization.create({
             data: {
                 name,
-                admin
             }
         });
     }
@@ -19,7 +17,6 @@ class OrganizationServices{
         return prismaClient.organization.findMany({
             select:{
                 name:true,
-                admin:true
             }
         })
     }
