@@ -3,7 +3,7 @@ import OrganizationServices, {CreateOrganizationPayload} from '../../services/or
 const mutations={
     createOrganization:async(_:any, payload:CreateOrganizationPayload)=>{
         const result=await OrganizationServices.createOrganization(payload)
-        return result.name
+        return result
     },
 }
 

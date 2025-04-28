@@ -1,3 +1,3 @@
 export const mutations=`
-    createOrganization(name:String!):String
+    createOrganization(name: String!, userIds: [ID!]): Organization!
 `;
