@@ -12,14 +12,14 @@ model User {
   firstName      String
   lastName       String
   email          String           @unique
-  password       String
-  salt           String           // <<== Added back
-
+  provider       String?          // <- add this if you're using "google" as a provider flag
   organizations  Organization[]   @relation("UserOrganizations")
   tasks          Task[]
-
+  password       String?          // <- make optional
+  salt           String?          // <- make optional
   @@map("users")
 }
+
 
 model Organization {
   id     String   @id @default(uuid())
