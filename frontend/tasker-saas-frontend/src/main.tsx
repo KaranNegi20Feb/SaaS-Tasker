@@ -10,7 +10,7 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const GOOGLE_CLIENT_ID = "632616492389-sj3bfs0mh6mh176q3nblt5ch6mglui0f.apps.googleusercontent.com"
+const GOOGLE_CLIENT_ID = ""
 
 
 createRoot(document.getElementById('root')!).render(
