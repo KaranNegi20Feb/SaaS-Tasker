@@ -1,20 +1,14 @@
-import React from "react";
-import { GoogleLogin } from "@react-oauth/google";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login"; // adjust path if needed
 
-function App() {
-  const responseGoogle = (response: any) => {
-    console.log("Google login response:", response);
-  };
-
+const App = () => {
   return (
-    <>
-      <h2>Login with Google</h2>
-      <GoogleLogin
-        onSuccess={responseGoogle}
-        onError={() => console.error("Login failed")}
-      />
-    </>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Login />} />
+          </Routes>
+        </Router>
   );
-}
+};
 
 export default App;
