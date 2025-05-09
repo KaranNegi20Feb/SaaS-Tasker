@@ -5,7 +5,6 @@ import App from './App.tsx'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { GoogleOAuthProvider } from "@react-oauth/google"; // Import this
 import dotenv from 'dotenv';
-dotenv.config(); // Load .env variables
 
 
 const client = new ApolloClient({
@@ -13,12 +12,12 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLES_CLIENT_ID || "your-google-client"
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={clientId}>
     <ApolloProvider client={client}>
       <App />
     </ApolloProvider>
