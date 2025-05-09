@@ -22,7 +22,11 @@ const mutations={
     createUser:async(_: any, payload:CreateUserPayload)=>{
         const res=await UserServices.createUser(payload);
         return res.id; 
-    }
+    },
+    googleSignup: async (_: any, payload: GoogleLoginPayload) => {
+        const token = await UserServices.googleLogin(payload);
+        return token;
+    },
 };
 
 export const resolvers={queries,mutations}
