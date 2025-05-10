@@ -24,3 +24,12 @@ export const CREATE_USER= gql`
     createUser(firstName: $firstName, lastName: $lastName, email: $email, password: $password)
   }
 `
+
+export const GET_USERS_ORGANIZATIONS= gql`
+query GetUsersOrganizations($credential: String!) {
+  getUsersOrganizations(credential: $credential) {
+    name
+    id
+  }
+}
+`

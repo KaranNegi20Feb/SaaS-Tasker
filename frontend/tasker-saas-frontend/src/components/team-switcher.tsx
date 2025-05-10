@@ -12,12 +12,52 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from '../components/ui/sidebar'
+import {Command} from 'lucide-react'
+import { useApolloClient } from "@apollo/client";
+import {GET_USERS_ORGANIZATIONS} from "../graphql/queries"
+import { useEffect } from "react";
+import { useTeamsStore } from '../store/useTeamsStore'; // Import the Zustand store
 
-export function TeamSwitcher({teams}: {teams: {name: string, logo: React.ElementType, plan: string}[]}) {
-  const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+export function TeamSwitcher() {
+  const client = useApolloClient();
+  const { teams, setTeams } = useTeamsStore(); // Zustand store
+
+  const [activeTeam, setActiveTeam] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const { data } = await client.query({
+          query: GET_USERS_ORGANIZATIONS,
+          variables: { credential: token },
+        });
+        setTeams(data.getUsersOrganizations);
+        if (data.getUsersOrganizations.length > 0) {
+          setActiveTeam(data.getUsersOrganizations[0].name);
+        }
+      } catch (err) {
+        console.error("Error fetching organizations:", err);
+      }
+    };
+
+    fetchOrganizations();
+  }, [client, setTeams]);
+
+  if (teams.length === 0 || !activeTeam) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton disabled size='lg' className='opacity-50'>
+            Loading teams...
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
+  }
 
   return (
     <SidebarMenu>
@@ -29,13 +69,13 @@ export function TeamSwitcher({teams}: {teams: {name: string, logo: React.Element
               className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
             >
               <div className='bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg'>
-                <activeTeam.logo className='size-4' />
+                <Command />
               </div>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-semibold'>
-                  {activeTeam.name}
+                  {activeTeam}
                 </span>
-                <span className='truncate text-xs'>{activeTeam.plan}</span>
+                <span className='truncate text-xs'>Startup</span>
               </div>
               <ChevronsUpDown className='ml-auto' />
             </SidebarMenuButton>
@@ -43,7 +83,7 @@ export function TeamSwitcher({teams}: {teams: {name: string, logo: React.Element
           <DropdownMenuContent
             className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
             align='start'
-            side={isMobile ? 'bottom' : 'right'}
+            side={'bottom'}
             sideOffset={4}
           >
             <DropdownMenuLabel className='text-muted-foreground text-xs'>
@@ -52,12 +92,9 @@ export function TeamSwitcher({teams}: {teams: {name: string, logo: React.Element
             {teams.map((team, index) => (
               <DropdownMenuItem
                 key={team.name}
-                onClick={() => setActiveTeam(team)}
+                onClick={() => setActiveTeam(team.name)}
                 className='gap-2 p-2'
               >
-                <div className='flex size-6 items-center justify-center rounded-sm border'>
-                  <team.logo className='size-4 shrink-0' />
-                </div>
                 {team.name}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
@@ -66,5 +103,5 @@ export function TeamSwitcher({teams}: {teams: {name: string, logo: React.Element
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }
