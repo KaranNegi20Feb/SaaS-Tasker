@@ -75,6 +75,39 @@ class UserServices {
     return JWT.sign({ id: user.id, email: user.email }, JWT_SECRET);
   }
 
+  public static async getOrganizations(credential: string) {
+    if (!credential) {
+      throw new Error("Token is required");
+    }
+
+    let decoded;
+    try {
+      // Verify and decode the token
+      decoded = JWT.verify(credential, JWT_SECRET) as { email: string };
+    } catch (err) {
+      throw new Error("Invalid or expired token");
+    }
+
+    const email = decoded.email;
+    if (!email) {
+      throw new Error("Token does not contain a valid email");
+    }
+
+    // Fetch user and related organizations
+    const user = await prismaClient.user.findUnique({
+      where: { email },
+      include: {
+        organizations: true, // Fetch related organizations
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user.organizations; // Return the organizations related to the user
+  }
+ 
   // 👥 Get All Users
   public static async getAllUsers() {
     return prismaClient.user.findMany({

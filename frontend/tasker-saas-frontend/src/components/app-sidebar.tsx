@@ -1,5 +1,5 @@
 import * as React from "react"
-import { GalleryVerticalEnd } from "lucide-react"
+import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
 
 import {
   Sidebar,
@@ -8,9 +8,9 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarTrigger
+  SidebarMenuItem
 } from "../components/ui/sidebar"
+import { TeamSwitcher } from "./team-switcher"
 
 const data = {
   navMain: [
@@ -34,23 +34,27 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const teams=[
+    {
+      name: 'Shadcn Admin',
+      logo: Command,
+      plan: 'Vite + ShadcnUI',
+    },
+    {
+      name: 'Acme Inc',
+      logo: GalleryVerticalEnd,
+      plan: 'Enterprise',
+    },
+    {
+      name: 'Acme Corp.',
+      logo: AudioWaveform,
+      plan: 'Startup',
+    }
+  ]
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold text-xl">Tasker</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <TeamSwitcher teams={teams}/>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

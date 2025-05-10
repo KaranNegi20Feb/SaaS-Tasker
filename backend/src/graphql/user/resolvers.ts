@@ -16,6 +16,9 @@ const queries={
         const token = await UserServices.googleLogin(payload);
         return token;
       },
+    getUsersOrganizations: async (_: any, { credential }: { credential: string }) => {
+        return await UserServices.getOrganizations(credential);
+    },
 }
 
 const mutations={
