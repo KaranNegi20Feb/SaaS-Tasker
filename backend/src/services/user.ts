@@ -42,7 +42,7 @@ class UserServices {
     const salt = randomBytes(32).toString("hex");
     const hashedPassword = this.generateHash(salt, payload.password);
 
-    return prismaClient.user.create({
+    const user= await prismaClient.user.create({
       data: {
         firstName: payload.firstName,
         lastName: payload.lastName,
@@ -51,6 +51,9 @@ class UserServices {
         password: hashedPassword,
       },
     });
+
+    return JWT.sign({id: user.id, email: user.email},JWT_SECRET);
+
   }
 
   // 🔎 Get User by Email
