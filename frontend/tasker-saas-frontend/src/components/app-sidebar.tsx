@@ -1,6 +1,4 @@
 import * as React from "react"
-import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
-
 import {
   Sidebar,
   SidebarContent,
@@ -10,9 +8,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "../components/ui/sidebar"
+
 import { TeamSwitcher } from "./team-switcher"
 
-const data = {
+
+const navConfig = {
   navMain: [
     {
       title: "Dashboard",
@@ -34,32 +34,15 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const teams=[
-    {
-      name: 'Shadcn Admin',
-      logo: Command,
-      plan: 'Vite + ShadcnUI',
-    },
-    {
-      name: 'Acme Inc',
-      logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
-    },
-    {
-      name: 'Acme Corp.',
-      logo: AudioWaveform,
-      plan: 'Startup',
-    }
-  ]
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={teams}/>
+        <TeamSwitcher/>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu className="gap-2">
-            {data.navMain.map((item) => (
+            {navConfig.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton className="text-lg font-medium" asChild>
                   <a href={item.url}>
