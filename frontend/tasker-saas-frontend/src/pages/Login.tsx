@@ -5,17 +5,18 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { useLazyQuery, gql } from "@apollo/client";
 import { GoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
 import { GET_USER_TOKEN, GET_USER_TOKEN_WITH_GOOGLE } from "../graphql/queries";
 
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate= useNavigate();
   const [getToken, { loading: loadingLogin }] = useLazyQuery(GET_USER_TOKEN, {
     onCompleted: (data) => {
       localStorage.setItem("token", data.getUserToken);
-      alert("Login successful");
+      navigate('/dashboard')
     },
     onError: (err) => {
       alert("Login failed: " + err.message);
@@ -25,7 +26,7 @@ const LoginPage = () => {
   const [googleLogin] = useLazyQuery(GET_USER_TOKEN_WITH_GOOGLE, {
     onCompleted: (data) => {
       localStorage.setItem("token", data.getUserTokenWithGoogle);
-      alert("Google login successful");
+      navigate('/dashboard')
     },
     onError: (err) => {
       alert("Google login failed: " + err.message);

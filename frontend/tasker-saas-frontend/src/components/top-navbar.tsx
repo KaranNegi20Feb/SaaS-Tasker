@@ -12,8 +12,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu"
+import { useNavigate } from "react-router-dom"
 
 export function TopNavbar() {
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem("token") // Clear the token
+    navigate("/login") // Redirect to login
+  }
+
   return (
     <div className="flex items-center justify-between bg-white">
       <div className="flex-1 w-50 lg:w-120">
@@ -36,7 +44,7 @@ export function TopNavbar() {
           <DropdownMenuSeparator />
           <DropdownMenuItem>Profile</DropdownMenuItem>
           <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
