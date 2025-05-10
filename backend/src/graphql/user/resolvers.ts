@@ -21,7 +21,7 @@ const queries={
 const mutations={
     createUser:async(_: any, payload:CreateUserPayload)=>{
         const res=await UserServices.createUser(payload);
-        return res.id; 
+        return res; 
     },
     googleSignup: async (_: any, payload: GoogleLoginPayload) => {
         const token = await UserServices.googleLogin(payload);
