@@ -3,6 +3,7 @@ import { useMutation } from "@apollo/client";
 import { GoogleLogin } from "@react-oauth/google";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { GOOGLE_SIGNUP, CREATE_USER } from "../graphql/queries"; // Ensure this is your Google Signup mutation
 
@@ -13,16 +14,22 @@ const SignUpPage = () => {
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [passwordMatch, setPasswordMatch] = useState(false);
+  const navigate = useNavigate();
+
 
   const [googleSignup, { error: googleError }] = useMutation(GOOGLE_SIGNUP, {
     onCompleted: (data) => {
       localStorage.setItem("token", data.googleSignup);
+      navigate('/dashboard')
+
     },
   });
   
   const [createUser, { loading: createUserLoading}] = useMutation(CREATE_USER, {
     onCompleted: (data) => {
       localStorage.setItem("token", data.createUser);
+      navigate('/dashboard')
+
     },
   });
   
@@ -59,7 +66,8 @@ const SignUpPage = () => {
         }
       });
       console.log("User created:", data);
-      // Redirect or show success message here
+      navigate('/dashboard');
+      
     } catch (err) {
       console.error("User creation failed:", err);
     }

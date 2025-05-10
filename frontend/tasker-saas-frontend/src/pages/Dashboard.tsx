@@ -5,9 +5,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "../components/ui/sidebar"
+import { useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   return (
+
     <SidebarProvider
       style={
         {
