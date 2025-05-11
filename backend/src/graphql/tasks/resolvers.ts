@@ -9,7 +9,10 @@ const mutation={
 const queries={
     getAllTasks: async () => {
         return await TaskService.getAllTasks();
-    }
+    },
+    getTaskByCreds: async (_: any, args: { userId: string, organizationId: string }) => {
+    return await TaskService.getTaskByCredentials(args);
+  },
 }
 
 export const resolvers={mutation,queries}

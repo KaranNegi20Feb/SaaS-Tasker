@@ -36,7 +36,7 @@ model Task {
   description     String
   userId          String?         // Optional: Task may belong to a User
   organizationId  String          // Must belong to an Organization
-
+  status          String          @default("PENDING")
   user            User?           @relation(fields: [userId], references: [id])
   organization    Organization    @relation(fields: [organizationId], references: [id])
 
