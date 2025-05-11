@@ -1,28 +1,28 @@
-import { ChevronsUpDown } from 'lucide-react'
+import { ChevronsUpDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu'
+} from '../components/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '../components/ui/sidebar'
-import {Command} from 'lucide-react'
-import { useApolloClient } from "@apollo/client";
-import { useEffect } from "react";
+} from '../components/ui/sidebar';
+import { Command } from 'lucide-react';
+import { useApolloClient } from '@apollo/client';
+import { useEffect } from 'react';
 import { useTeamsStore } from '../store/useTeamsStore'; // Import the Zustand store
 
 export function TeamSwitcher() {
-const client = useApolloClient();
-const { teams, activeTeam, setActiveTeam, fetchTeams } = useTeamsStore();
+  const client = useApolloClient();
+  const { teams, activeTeam, setActiveTeam, fetchTeams } = useTeamsStore();
 
-useEffect(() => {
-  fetchTeams(client);
-}, [client, fetchTeams]);
+  useEffect(() => {
+    fetchTeams(client);
+  }, [client, fetchTeams]);
 
   if (teams.length === 0 || !activeTeam) {
     return (
@@ -50,9 +50,11 @@ useEffect(() => {
               </div>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-semibold'>
-                  {activeTeam}
+                  {activeTeam ? activeTeam.name : 'No Active Team'}
                 </span>
-                <span className='truncate text-xs'>Startup</span>
+                <span className='truncate text-xs'>
+                  {activeTeam ? activeTeam.id : 'No Team ID'}
+                </span>
               </div>
               <ChevronsUpDown className='ml-auto' />
             </SidebarMenuButton>
@@ -68,8 +70,8 @@ useEffect(() => {
             </DropdownMenuLabel>
             {teams.map((team) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team.name)}
+                key={team.id} // Use team.id as the key now
+                onClick={() => setActiveTeam(team)} // Set the entire team object
                 className='gap-2 p-2'
               >
                 {team.name}
