@@ -21,32 +21,6 @@ type User = {
   email: string
 }
 
-const team: User[] = [
-  {
-    id: "U001",
-    firstName: "Alice",
-    lastName: "Johnson",
-    email: "alice@example.com",
-  },
-  {
-    id: "U002",
-    firstName: "Bob",
-    lastName: "Smith",
-    email: "bob@example.com",
-  },
-  {
-    id: "U003",
-    firstName: "Carol",
-    lastName: "Lee",
-    email: "carol@example.com",
-  },
-  {
-    id: "U004",
-    firstName: "David",
-    lastName: "Kim",
-    email: "david@example.com",
-  },
-]
 
 const columns: ColumnDef<User>[] = [
   {
@@ -110,12 +84,12 @@ export default function TeamPage() {
   // Fetch members when activeTeam changes
   useEffect(() => {
     if (activeTeam) {
-      fetchTeamMembers(client, activeTeam)
+      fetchTeamMembers(client, activeTeam.name)
     }
   }, [activeTeam, fetchTeamMembers, client])
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold">{activeTeam}</h1>
+      <h1 className="text-2xl font-bold">{activeTeam?.name}</h1>
       <div className="text-md font-medium mb-3">Team Members</div>
       <DataTable columns={columns} data={teamMembersActiveTeam} />
     </div>

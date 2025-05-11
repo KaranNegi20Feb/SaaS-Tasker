@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import { GET_USERS_ORGANIZATIONS, GET_ALL_USERS_FROM_ORGANIZATION } from '../graphql/queries';
+import { jwtDecode } from "jwt-decode";
+import {
+  GET_USERS_ORGANIZATIONS,
+  GET_ALL_USERS_FROM_ORGANIZATION,
+  GET_TASKS_BY_IDS,
+} from '../graphql/queries';
+
+const JWT_SECRET = "$KARN"; // Same secret used when issuing the token
 
 interface User {
   id: string;
@@ -8,26 +15,43 @@ interface User {
   email: string;
 }
 
-interface TeamsState {
-  teams: { name: string }[];
-  activeTeam: string | null;
-  teamMembersActiveTeam: User[];
-
-  setTeams: (teams: { name: string }[]) => void;
-  setActiveTeam: (teamName: string) => void;
-  setTeamMembersActiveTeam: (users: User[]) => void;
-  fetchTeams: (client: any) => Promise<void>;
-  fetchTeamMembers: (client: any, teamName: string) => Promise<void>;
-
+interface Task {
+  title: string;
+  description: string;
+  status: string;
 }
 
-export const useTeamsStore = create<TeamsState>((set) => ({
+interface Team {
+  id: string;
+  name: string;
+}
+
+interface TeamsState {
+  teams: Team[];
+  activeTeam: Team | null;
+  teamMembersActiveTeam: User[];
+  activeTasks: Task[];
+
+  setTeams: (teams: Team[]) => void;
+  setActiveTeam: (team: Team) => void;
+  setTeamMembersActiveTeam: (users: User[]) => void;
+  setActiveTasks: (tasks: Task[]) => void;
+
+  fetchTeams: (client: any) => Promise<void>;
+  fetchTeamMembers: (client: any, teamName: string) => Promise<void>;
+  fetchTasks: (client: any) => Promise<void>;
+}
+
+export const useTeamsStore = create<TeamsState>((set, get) => ({
   teams: [],
   activeTeam: null,
   teamMembersActiveTeam: [],
+  activeTasks: [],
+
   setTeams: (teams) => set({ teams }),
-  setActiveTeam: (teamName) => set({ activeTeam: teamName }),
+  setActiveTeam: (team) => set({ activeTeam: team }),
   setTeamMembersActiveTeam: (users) => set({ teamMembersActiveTeam: users }),
+  setActiveTasks: (tasks) => set({ activeTasks: tasks }),
 
   fetchTeams: async (client) => {
     const token = localStorage.getItem("token");
@@ -39,21 +63,22 @@ export const useTeamsStore = create<TeamsState>((set) => ({
         variables: { credential: token },
       });
 
-      const teams = data.getUsersOrganizations;
-      set({
-        teams,
-        activeTeam: teams.length > 0 ? teams[0].name : null,
-      });
+      const teams: Team[] = data.getUsersOrganizations;
 
-      // Fetch members for default active team
       if (teams.length > 0) {
+        const defaultTeam = teams[0];
+
+        set({
+          teams,
+          activeTeam: defaultTeam,
+        });
+
         const { data: membersData } = await client.query({
           query: GET_ALL_USERS_FROM_ORGANIZATION,
-          variables: { name: teams[0].name },
+          variables: { name: defaultTeam.name },
         });
         set({ teamMembersActiveTeam: membersData.getAllUsersfromOrganization });
       }
-
     } catch (err) {
       console.error("Error fetching organizations:", err);
     }
@@ -70,4 +95,29 @@ export const useTeamsStore = create<TeamsState>((set) => ({
       console.error("Error fetching team members:", err);
     }
   },
+
+  fetchTasks: async (client) => {
+    const token = localStorage.getItem("token");
+    const state = get();
+    const organizationId = state.activeTeam?.id;
+
+    if (!token || !organizationId) {
+      console.warn("Missing token or organization ID");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode<{ id: string; email: string }>(token);
+      const userId = decoded.id;
+
+      const { data } = await client.query({
+        query: GET_TASKS_BY_IDS,
+        variables: { userId, organizationId },
+      });
+
+      set({ activeTasks: data.getTaskByCreds });
+    } catch (err) {
+      console.error("Error fetching tasks:", err);
+    }
+  }
 }));
