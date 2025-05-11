@@ -1,6 +1,9 @@
 "use client"
-
+import { useTeamsStore } from '../../store/useTeamsStore'; // Import the Zustand store
 import { ColumnDef } from "@tanstack/react-table"
+import { useEffect } from "react";
+import { useApolloClient } from "@apollo/client";
+
 import { DataTable } from "../../components/data-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Button } from "../../components/ui/button"
@@ -98,10 +101,23 @@ const columns: ColumnDef<User>[] = [
 ]
 
 export default function TeamPage() {
+  const {activeTeam,teamMembersActiveTeam,fetchTeams,fetchTeamMembers} = useTeamsStore();
+  const client = useApolloClient();
+  useEffect(() => {
+    fetchTeams(client)
+  }, [client, fetchTeams])
+
+  // Fetch members when activeTeam changes
+  useEffect(() => {
+    if (activeTeam) {
+      fetchTeamMembers(client, activeTeam)
+    }
+  }, [activeTeam, fetchTeamMembers, client])
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Team</h1>
-      <DataTable columns={columns} data={team} />
+      <h1 className="text-2xl font-bold">{activeTeam}</h1>
+      <div className="text-md font-medium mb-3">Team Members</div>
+      <DataTable columns={columns} data={teamMembersActiveTeam} />
     </div>
   )
 }

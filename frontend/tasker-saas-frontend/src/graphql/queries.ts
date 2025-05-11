@@ -33,3 +33,15 @@ query GetUsersOrganizations($credential: String!) {
   }
 }
 `
+
+export const GET_ALL_USERS_FROM_ORGANIZATION =gql`
+query GetAllUsersfromOrganization($name: String!) {
+  getAllUsersfromOrganization(name: $name) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+`
+
