@@ -1,11 +1,9 @@
-import * as React from 'react'
 import { ChevronsUpDown } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu'
 import {
@@ -15,37 +13,16 @@ import {
 } from '../components/ui/sidebar'
 import {Command} from 'lucide-react'
 import { useApolloClient } from "@apollo/client";
-import {GET_USERS_ORGANIZATIONS} from "../graphql/queries"
 import { useEffect } from "react";
 import { useTeamsStore } from '../store/useTeamsStore'; // Import the Zustand store
 
 export function TeamSwitcher() {
-  const client = useApolloClient();
-  const { teams, setTeams } = useTeamsStore(); // Zustand store
+const client = useApolloClient();
+const { teams, activeTeam, setActiveTeam, fetchTeams } = useTeamsStore();
 
-  const [activeTeam, setActiveTeam] = React.useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchOrganizations = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const { data } = await client.query({
-          query: GET_USERS_ORGANIZATIONS,
-          variables: { credential: token },
-        });
-        setTeams(data.getUsersOrganizations);
-        if (data.getUsersOrganizations.length > 0) {
-          setActiveTeam(data.getUsersOrganizations[0].name);
-        }
-      } catch (err) {
-        console.error("Error fetching organizations:", err);
-      }
-    };
-
-    fetchOrganizations();
-  }, [client, setTeams]);
+useEffect(() => {
+  fetchTeams(client);
+}, [client, fetchTeams]);
 
   if (teams.length === 0 || !activeTeam) {
     return (
