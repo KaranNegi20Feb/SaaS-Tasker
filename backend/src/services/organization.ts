@@ -29,6 +29,15 @@ class OrganizationServices {
     });
   }
 
+  public static async getAllUsersfromOrganization(name:string){
+    const allusers= await prismaClient.organization.findFirst({ where: { name },
+    include:{
+      users:true,
+    }
+    })
+    return allusers?.users;
+  }
+
   public static getAllOrganizations() {
     return prismaClient.organization.findMany({
       select: {
