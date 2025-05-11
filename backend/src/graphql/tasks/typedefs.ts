@@ -3,6 +3,7 @@ export const typedefs=`
     title: String!
     description: String!
     user: User 
+    status: String!
     organization: Organization! 
     }
 `

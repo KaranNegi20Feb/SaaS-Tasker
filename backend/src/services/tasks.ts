@@ -5,11 +5,12 @@ export interface CreateTaskPayload {
     description: string;
     userId?: string;          // userId is optional
     organizationId: string;
+    status:string;
 }
 
 class TaskService {
     public static createTask(payload: CreateTaskPayload) {
-        const { title, description, userId, organizationId } = payload;
+        const { title, description, userId, organizationId,status } = payload;
 
         return prismaClient.task.create({
             data: {
@@ -17,6 +18,7 @@ class TaskService {
                 description,
                 userId,
                 organizationId,
+                status
             },
             include: {
                 user: {
@@ -34,6 +36,18 @@ class TaskService {
             },
         });
     }
+
+    public static async getTaskByCredentials(payload: { userId: string, organizationId: string }) {
+        const { userId, organizationId } = payload;
+        const tasks = await prismaClient.task.findMany({
+            where: {
+            userId,
+            organizationId
+            }
+        });
+        return tasks;
+    }
+
 
     public static getAllTasks() {
         return prismaClient.task.findMany({
