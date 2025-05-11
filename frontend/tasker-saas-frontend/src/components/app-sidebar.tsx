@@ -8,28 +8,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "../components/ui/sidebar"
-
 import { TeamSwitcher } from "./team-switcher"
-
+import { Link } from "react-router-dom"
 
 const navConfig = {
   navMain: [
-    {
-      title: "Dashboard",
-      url: "#"
-    },
-    {
-      title: "Tasks",
-      url: "#"
-    },
-    {
-      title: "Team",
-      url: "#"
-    },
-    {
-      title: "Chat",
-      url: "#"
-    }
+    { title: "Dashboard", url: "/dashboard" },
+    { title: "Tasks", url: "/tasks" },
+    { title: "Team", url: "/team" },
+    { title: "Chat", url: "/chat" }
   ],
 }
 
@@ -37,7 +24,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
-        <TeamSwitcher/>
+        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -45,9 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {navConfig.navMain.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton className="text-lg font-medium" asChild>
-                  <a href={item.url}>
-                    {item.title}
-                  </a>
+                  <Link to={item.url}>{item.title}</Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

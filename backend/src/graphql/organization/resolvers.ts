@@ -10,6 +10,9 @@ const mutations={
 const queries={
     getAllOrganizations: async () => {
         return await OrganizationServices.getAllOrganizations();
+    },
+    getAllUsersfromOrganization:async (_:any, {name}: {name:string})=>{
+        return await OrganizationServices.getAllUsersfromOrganization(name);
     }
 }
 export const resolvers={mutations,queries}
