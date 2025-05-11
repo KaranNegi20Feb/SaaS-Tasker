@@ -89,14 +89,13 @@ export function TeamSwitcher() {
             <DropdownMenuLabel className='text-muted-foreground text-xs'>
               Teams
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
+            {teams.map((team) => (
               <DropdownMenuItem
                 key={team.name}
                 onClick={() => setActiveTeam(team.name)}
                 className='gap-2 p-2'
               >
                 {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
