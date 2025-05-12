@@ -12,6 +12,13 @@ model User {
   firstName      String
   lastName       String
   email          String           @unique
+  bio            String?
+  skills         String[]
+  githubUsername String?          // extract from GitHub URL
+  avatar         String?
+  githubUrl      String?
+  twitterUrl     String?
+  linkedinUrl    String?       
   provider       String?          // <- add this if you're using "google" as a provider flag
   organizations  Organization[]   @relation("UserOrganizations")
   tasks          Task[]

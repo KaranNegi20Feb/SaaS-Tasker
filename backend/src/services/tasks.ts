@@ -67,6 +67,12 @@ class TaskService {
             },
         });
     }
+
+    public static async getAllTasksByUserId(userId: string){
+        return await prismaClient.task.findMany({
+            where:{userId}
+        })
+    }
 }
 
 export default TaskService;

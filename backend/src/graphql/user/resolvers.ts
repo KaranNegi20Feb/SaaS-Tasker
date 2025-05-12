@@ -1,5 +1,5 @@
 import { Payload } from "@prisma/client/runtime/library";
-import UserServices, { CreateUserPayload, GoogleLoginPayload } from "../../services/user";
+import UserServices, { CreateUserPayload, GoogleLoginPayload, UpdateUserDetailsPayloadWithEmail } from "../../services/user";
 
 const queries={
     getUserToken:async(_:any,payload:{email:string, password:string})=>{
@@ -19,6 +19,9 @@ const queries={
     getUsersOrganizations: async (_: any, { credential }: { credential: string }) => {
         return await UserServices.getOrganizations(credential);
     },
+    getUserDetailsWithEmail: async (_:any,{ email }:{email:string})=>{
+        return await UserServices.getUserDetailbyEmail(email);
+    }
 }
 
 const mutations={
@@ -30,6 +33,12 @@ const mutations={
         const token = await UserServices.googleLogin(payload);
         return token;
     },
+    updateUserDetails: async (_: any, payload: UpdateUserDetailsPayloadWithEmail) => {
+        const updatedUser = await UserServices.updateUserDetails(payload);
+        return "User updated successfully";
+    }
+
+
 };
 
 export const resolvers={queries,mutations}

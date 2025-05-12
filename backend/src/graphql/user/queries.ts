@@ -3,4 +3,5 @@ export const queries=`#graphql
     getAllUsers: [User!]!
     getUserTokenWithGoogle(credential: String!): String
     getUsersOrganizations(credential:String!):[Organization!]!
+    getUserDetailsWithEmail(email:String!):User
 `
