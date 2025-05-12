@@ -22,7 +22,7 @@ export function TeamSwitcher() {
 
   useEffect(() => {
     fetchTeams(client);
-  }, [client, fetchTeams]);
+  }, [client]);
 
   if (teams.length === 0 || !activeTeam) {
     return (
