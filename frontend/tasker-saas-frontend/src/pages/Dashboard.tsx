@@ -10,6 +10,7 @@ import DashboardHome from "./dashboard-section/DashboardHome"
 import Tasks from "./dashboard-section/Tasks"
 import Teams from "./dashboard-section/Teams"
 import Chat from "./dashboard-section/Chat"
+import Profile from "./Profile"
 
 export default function Dashboard() {
   const location = useLocation()
@@ -24,6 +25,8 @@ export default function Dashboard() {
         return <Teams />
       case "/chat":
         return <Chat />
+      case "/profile":
+        return <Profile/>
       default:
         return <div>Page Not Found</div>
     }
