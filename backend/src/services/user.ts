@@ -22,6 +22,18 @@ export interface CreateUserPayload {
   password: string;
 }
 
+
+export interface UpdateUserDetailsPayloadWithEmail{
+    email: string;             
+    bio: string;
+    skills: [];
+    githubUsername: string;
+    avatar: string;
+    githubUrl: string;
+    twitterUrl: string;
+    linkedinUrl: string;
+}
+
 export interface GetUserTokenPayload {
   email: string;
   password: string;
@@ -111,7 +123,7 @@ class UserServices {
   // 👥 Get All Users
   public static async getAllUsers() {
     return prismaClient.user.findMany({
-      select: { id: true, firstName: true, lastName: true, email: true },
+      select: { id: true, firstName: true, lastName: true, email: true ,bio:true, skills:true,githubUsername:true,avatar:true,githubUrl:true,twitterUrl:true,linkedinUrl:true },
     });
   }
 
@@ -144,6 +156,32 @@ class UserServices {
 
     return JWT.sign({ id: user.id, email: user.email }, JWT_SECRET);
   }
+
+  public static async getUserDetailbyEmail(email:string){
+    return prismaClient.user.findUnique({
+      where: {email},
+      select: { id: true, firstName: true, lastName: true, email: true ,bio:true, skills:true, githubUsername:true, avatar:true, githubUrl:true, twitterUrl:true, linkedinUrl:true },
+    });
+  }
+
+  public static async updateUserDetails(payload: UpdateUserDetailsPayloadWithEmail) {
+  return await prismaClient.user.update({
+    where: { email: payload.email },
+    data: {
+      bio: payload.bio,
+      skills: payload.skills,
+      githubUsername: payload.githubUsername,
+      avatar: payload.avatar,
+      githubUrl: payload.githubUrl,
+      twitterUrl: payload.twitterUrl,
+      linkedinUrl: payload.linkedinUrl,
+    }
+  });
+}
+
+
+
+
 }
 
 export default UserServices;

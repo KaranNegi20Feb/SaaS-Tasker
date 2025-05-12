@@ -13,6 +13,9 @@ const queries={
     getTaskByCreds: async (_: any, args: { userId: string, organizationId: string }) => {
     return await TaskService.getTaskByCredentials(args);
   },
+  getAllTasksById: async (_:any,{userId}:{userId:string})=>{
+    return await TaskService.getAllTasksByUserId(userId)
+  }
 }
 
 export const resolvers={mutation,queries}
