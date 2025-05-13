@@ -14,38 +14,56 @@ model User {
   email          String           @unique
   bio            String?
   skills         String[]
-  githubUsername String?          // extract from GitHub URL
+  githubUsername String?
   avatar         String?
   githubUrl      String?
   twitterUrl     String?
-  linkedinUrl    String?       
-  provider       String?          // <- add this if you're using "google" as a provider flag
+  linkedinUrl    String?
+  provider       String?
+  password       String?
+  salt           String?
+
   organizations  Organization[]   @relation("UserOrganizations")
+  adminOf        Organization[]   @relation("OrganizationAdmin")
   tasks          Task[]
-  password       String?          // <- make optional
-  salt           String?          // <- make optional
+  requests       Request[]        @relation("UserRequests")
+
   @@map("users")
 }
 
-
 model Organization {
-  id     String   @id @default(uuid())
-  name   String
-  users  User[]   @relation("UserOrganizations")
-  tasks  Task[]
+  id           String     @id @default(uuid())
+  name         String
+  adminId      String
+  admin        User       @relation("OrganizationAdmin", fields: [adminId], references: [id])
+  users        User[]     @relation("UserOrganizations")
+  tasks        Task[]
+  requests     Request[]  @relation("OrgRequests")
 
   @@map("organizations")
+}
+
+model Request {
+  id              String       @id @default(uuid())
+  name            String
+  status          String       @default("PENDING") // PENDING | ACCEPTED | REJECTED
+  userId          String
+  organizationId  String
+  user            User         @relation("UserRequests", fields: [userId], references: [id])
+  organization    Organization @relation("OrgRequests", fields: [organizationId], references: [id])
+
+  @@map("requests")
 }
 
 model Task {
   id              String         @id @default(uuid())
   title           String
   description     String
-  userId          String?         // Optional: Task may belong to a User
-  organizationId  String          // Must belong to an Organization
-  status          String          @default("PENDING")
-  user            User?           @relation(fields: [userId], references: [id])
-  organization    Organization    @relation(fields: [organizationId], references: [id])
+  userId          String?
+  organizationId  String
+  status          String         @default("PENDING")
+  user            User?          @relation(fields: [userId], references: [id])
+  organization    Organization   @relation(fields: [organizationId], references: [id])
 
   @@map("tasks")
 }
