@@ -8,6 +8,13 @@ const mutation = {
     const request = await RequestService.createRequest(name, userId, organizationId);
     return request;
   },
+  acceptRequest: async (_: any, { requestId }: { requestId: string }) => {
+  return await RequestService.acceptRequest(requestId);
+},
+rejectRequest: async (_: any, { requestId }: { requestId: string }) => {
+  return await RequestService.rejectRequest(requestId);
+},
+
 };
 
 const queries = {
