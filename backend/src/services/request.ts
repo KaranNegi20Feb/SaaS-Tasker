@@ -31,7 +31,51 @@ class RequestService {
       organization: true,
     },
   });
+  }
+
+  public static async acceptRequest(requestId: string) {
+  const request = await prismaClient.request.findUnique({
+    where: { id: requestId },
+  });
+
+  if (!request) {
+    throw new Error("Request not found.");
+  }
+
+  await prismaClient.organization.update({
+    where: { id: request.organizationId },
+    data: {
+      users: {
+        connect: { id: request.userId },
+      },
+    },
+  });
+
+  await prismaClient.request.delete({
+    where: { id: requestId },
+  });
+
+  return "Request accepted and processed.";
 }
+
+public static async rejectRequest(requestId: string) {
+  const request = await prismaClient.request.findUnique({
+    where: { id: requestId },
+  });
+
+  if (!request) {
+    throw new Error("Request not found.");
+  }
+
+  // Simply delete the request
+  await prismaClient.request.delete({
+    where: { id: requestId },
+  });
+
+  return "Request rejected and removed.";
+}
+
+
 
 }
 
