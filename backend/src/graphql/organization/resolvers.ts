@@ -12,7 +12,7 @@ const queries={
         return await OrganizationServices.getAllOrganizations();
     },
     getAllUsersfromOrganization:async (_:any, {name}: {name:string})=>{
-        return await OrganizationServices.getAllUsersfromOrganization(name);
+        return await OrganizationServices.getAllUsersFromOrganization(name);
     }
 }
 export const resolvers={mutations,queries}
