@@ -1,7 +1,22 @@
-import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card"
-import { Button } from "../../components/ui/button"
+import { useEffect } from "react";
+import { useApolloClient } from "@apollo/client";
+import { useTaskStore } from "../../store/useTasksStore";
+import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import {
+  Clock,
+  Loader2,
+  CheckCircle,
+} from "lucide-react";
 
 export default function DashboardHome() {
+  const client = useApolloClient();
+  const { fetchTasks, pending, inprogress, tasks } = useTaskStore();
+
+  useEffect(() => {
+    fetchTasks(client);
+  }, [client]);
+
   return (
     <div className="p-6 space-y-6">
       {/* Welcome */}
@@ -14,21 +29,57 @@ export default function DashboardHome() {
             <CardTitle className="text-lg">Total Tasks Overview</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            You have 5 tasks pending and 3 in progress.
+            You have {pending} tasks pending and {inprogress} in progress.
           </CardContent>
         </Card>
 
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle className="text-lg">All Recent Activity</CardTitle>
+            <CardTitle className="text-lg">All Recent Tasks</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              <li>Completed “Design Login UI”</li>
-              <li>Started “API integration for dashboard”</li>
-              <li>Added new task: “Deploy on Vercel”</li>
-            </ul>
-          </CardContent>
+  {tasks.length === 0 ? (
+    <p className="text-sm text-muted-foreground">No recent activity.</p>
+  ) : (
+    <ul className="space-y-2">
+      {tasks.slice(0, 5).map((task, idx) => (
+        <li
+          key={idx}
+          className="flex items-center space-x-3 px-4 py-2 rounded-md shadow-sm"
+        >
+          {task.status === "PENDING" && (
+            <>
+              <Clock className="text-yellow-500 w-4 h-4" />
+              <span>
+                <strong>{task.title}</strong> —{" "}
+                <span className="text-yellow-600">Pending</span>
+              </span>
+            </>
+          )}
+          {task.status === "IN_PROGRESS" && (
+            <>
+              <Loader2 className="text-blue-500 w-4 h-4 animate-spin" />
+              <span>
+                <strong>{task.title}</strong> —{" "}
+                <span className="text-blue-600">In Progress</span>
+              </span>
+            </>
+          )}
+          {task.status === "COMPLETED" && (
+            <>
+              <CheckCircle className="text-green-500 w-4 h-4" />
+              <span>
+                <strong>{task.title}</strong> —{" "}
+                <span className="text-green-600">Completed</span>
+              </span>
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
+  )}
+</CardContent>
+
         </Card>
       </div>
 

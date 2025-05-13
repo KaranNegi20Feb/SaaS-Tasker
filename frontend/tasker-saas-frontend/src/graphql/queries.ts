@@ -55,3 +55,13 @@ query GetTaskByCreds($userId: String!, $organizationId: String!) {
 }
 `
 
+export const GET_ALL_TASKS_IDS=gql`
+query GetAllTasksById($userId: String!) {
+  getAllTasksById(userId: $userId) {
+    status
+    title
+    description
+  }
+}
+`
+
