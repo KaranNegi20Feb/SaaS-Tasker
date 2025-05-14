@@ -116,3 +116,21 @@ mutation Mutation($requestId: String!) {
   acceptRequest(requestId: $requestId)
 }
 `
+
+export const GET_USER_DETAILS=gql`
+query Query($email: String!) {
+  getUserDetailsWithEmail(email: $email) {
+    id
+    firstName
+    lastName
+    email
+    bio
+    skills
+    githubUsername
+    avatar
+    githubUrl
+    twitterUrl
+    linkedinUrl
+  }
+}
+`
