@@ -20,6 +20,7 @@ export function TopNavbar() {
   const handleLogout = () => {
     localStorage.removeItem("token") // Clear the token
     navigate("/login") // Redirect to login
+      window.location.reload(); // Refresh the page
   }
 
   return (
@@ -43,7 +44,7 @@ export function TopNavbar() {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => navigate('/profile')}>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate('/setting')}>Settings</DropdownMenuItem>
           <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

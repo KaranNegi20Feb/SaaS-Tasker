@@ -38,7 +38,7 @@ export function TeamSwitcher() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton disabled size='lg' className='opacity-50'>
-            Loading teams...
+            No Teams
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
