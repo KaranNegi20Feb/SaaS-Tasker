@@ -14,6 +14,7 @@ export default function ProfileEditor() {
     user,
     updateUserDetails,
     fetchUserDetails,
+    resetDetails, // Add resetDetails here
     successUpdated,
     resetSuccess,
   } = useUserStore()
@@ -30,8 +31,27 @@ export default function ProfileEditor() {
 
   const [dialogOpen, setDialogOpen] = useState(false)
 
+  // Check for token and user
   useEffect(() => {
-    if (user) {
+    const token = localStorage.getItem("token")
+
+    if (!token) {
+      resetDetails()  // Reset user state when no token
+      setForm({
+        bio: "",
+        skills: "",
+        githubUsername: "",
+        avatar: "",
+        githubUrl: "",
+        twitterUrl: "",
+        linkedinUrl: "",
+      })
+      return
+    }
+
+    if (!user) {
+      fetchUserDetails(client)
+    } else {
       setForm({
         bio: user.bio || "",
         skills: user.skills?.join(", ") || "",
@@ -41,8 +61,6 @@ export default function ProfileEditor() {
         twitterUrl: user.twitterUrl || "",
         linkedinUrl: user.linkedinUrl || "",
       })
-    } else {
-      fetchUserDetails(client)
     }
   }, [user])
 

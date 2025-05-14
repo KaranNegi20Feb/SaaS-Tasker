@@ -20,6 +20,7 @@ export function TopNavbar() {
   const handleLogout = () => {
     localStorage.removeItem("token") // Clear the token
     navigate("/login") // Redirect to login
+      window.location.reload(); // Refresh the page
   }
 
   return (

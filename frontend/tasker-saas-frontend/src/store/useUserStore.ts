@@ -27,6 +27,7 @@ interface UserState {
   error: string | null
   successUpdated: boolean
   resetUser: () => void
+  resetDetails: () => void // Add this function
   fetchUserDetails: (client: ApolloClient<any>) => Promise<void>
   updateUserDetails: (
     client: ApolloClient<any>,
@@ -42,6 +43,7 @@ export const useUserStore = create<UserState>((set, get) => ({
   successUpdated: false,
 
   resetUser: () => set({ user: null, loading: false, error: null }),
+  resetDetails: () => set({ user: null, successUpdated: false }), // Reset user details
 
   resetSuccess: () => set({ successUpdated: false }),
 
