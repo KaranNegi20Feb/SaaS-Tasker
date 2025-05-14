@@ -1,4 +1,5 @@
 import { prismaClient } from "../lib/db";
+import jwt from 'jsonwebtoken';
 
 class RequestService {
   public static async createRequest(name: string, userId: string, organizationId: string) {
@@ -24,14 +25,18 @@ class RequestService {
       },
     });
   }
-  public static async getAllRequests() {
+
+
+  public static async getAllRequests(adminId: string) {
   return await prismaClient.request.findMany({
-    include: {
-      user: true,
-      organization: true,
-    },
+    where: {
+      organization: {
+        adminId: adminId, // only requests for organizations where this user is the admin
+      },
+    }
   });
-  }
+}
+
 
   public static async acceptRequest(requestId: string) {
   const request = await prismaClient.request.findUnique({

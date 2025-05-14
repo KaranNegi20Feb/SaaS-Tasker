@@ -65,3 +65,54 @@ query GetAllTasksById($userId: String!) {
 }
 `
 
+export const CREATE_TASK=gql`
+mutation Mutation($title: String!, $description: String!, $organizationId: ID!, $status: String!, $userId: ID) {
+  createTask(title: $title, description: $description, organizationId: $organizationId, status: $status, userId: $userId) {
+    status
+    title
+    description
+  }
+}
+`
+
+export const CREATE_ORGANIZATION=gql`
+mutation CreateOrganization($name: String!, $userIds: [ID!], $adminId: String) {
+  createOrganization(name: $name, userIds: $userIds, adminId: $adminId) {
+    id
+    name
+  }
+}
+`
+
+export const SEND_REQUEST_TO_JOIN_ORGANIZATION=gql`
+mutation Mutation($name: String!, $userId: String!, $organizationId: String!) {
+  createRequest(name: $name, userId: $userId, organizationId: $organizationId) {
+    name
+    organizationId
+    userId
+  }
+}
+`
+
+export const SHOW_ALL_REQUESTS=gql`
+query GetAllRequests($adminId: String!) {
+  getAllRequests(adminId: $adminId) {
+    name
+    organizationId
+    status
+    id
+  }
+}
+`
+
+export const REJECT_REQUEST_TO_JOIN_ORGANIZATION=gql`
+mutation Mutation($requestId: String!) {
+  acceptRequest(requestId: $requestId)
+}
+`
+
+export const ACCEPT_REQUEST_TO_JOIN_ORGANIZATION=gql`
+mutation Mutation($requestId: String!) {
+  acceptRequest(requestId: $requestId)
+}
+`

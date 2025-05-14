@@ -18,8 +18,8 @@ rejectRequest: async (_: any, { requestId }: { requestId: string }) => {
 };
 
 const queries = {
-  getAllRequests: async () => {
-    const requests = await RequestService.getAllRequests();
+  getAllRequests: async (_:any,{adminId}:{adminId:string}) => {
+    const requests = await RequestService.getAllRequests(adminId);
     return requests;
   },
 };

@@ -13,16 +13,25 @@ import {
 } from '../components/ui/sidebar';
 import { Command } from 'lucide-react';
 import { useApolloClient } from '@apollo/client';
-import { useEffect } from 'react';
 import { useTeamsStore } from '../store/useTeamsStore'; // Import the Zustand store
+import { useEffect } from "react"
+import { useOrgStore } from "../store/useOrgStore"
+
 
 export function TeamSwitcher() {
   const client = useApolloClient();
   const { teams, activeTeam, setActiveTeam, fetchTeams } = useTeamsStore();
+  const { organization } = useOrgStore();
 
   useEffect(() => {
     fetchTeams(client);
   }, [client]);
+
+  useEffect(()=>{
+    if(organization){
+      fetchTeams(client);
+    }
+  },[organization])
 
   if (teams.length === 0 || !activeTeam) {
     return (

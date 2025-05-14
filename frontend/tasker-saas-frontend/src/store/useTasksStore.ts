@@ -12,7 +12,7 @@ interface TaskState {
   tasks: TaskDetails[];
   pending: number;
   inprogress: number;
-  fetchTasks: (client:any) => Promise<void>;
+  fetchTasks: (client: any) => Promise<void>;
 }
 
 export const useTaskStore = create<TaskState>((set) => ({
@@ -24,7 +24,7 @@ export const useTaskStore = create<TaskState>((set) => ({
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
-      
+
       const { id: userId } = jwtDecode<{ id: string }>(token);
 
       const { data } = await client.query({
@@ -34,8 +34,8 @@ export const useTaskStore = create<TaskState>((set) => ({
       });
 
       const tasks: TaskDetails[] = data.getAllTasksById;
-      const pending = tasks.filter(t => t.status === 'PENDING').length;
-      const inprogress = tasks.filter(t => t.status === 'IN_PROGRESS').length;
+      const pending = tasks.filter((t) => t.status === 'PENDING').length;
+      const inprogress = tasks.filter((t) => t.status === 'IN_PROGRESS').length;
 
       set({ tasks, pending, inprogress });
     } catch (error) {

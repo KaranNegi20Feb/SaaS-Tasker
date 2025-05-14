@@ -11,6 +11,7 @@ import {
 import { TeamSwitcher } from "./team-switcher"
 import { Link } from "react-router-dom"
 
+
 const navConfig = {
   navMain: [
     { title: "Dashboard", url: "/dashboard" },
@@ -21,6 +22,7 @@ const navConfig = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
