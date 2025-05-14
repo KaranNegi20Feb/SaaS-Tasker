@@ -1,0 +1,102 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useUserStore } from "../store/useUserStore"
+import { useApolloClient } from "@apollo/client"
+import { Input } from "../components/ui/input"
+import { Button } from "../components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog"
+import { Label } from "../components/ui/label"
+
+export default function ProfileEditor() {
+  const client = useApolloClient()
+  const {
+    user,
+    updateUserDetails,
+    fetchUserDetails,
+    successUpdated,
+    resetSuccess,
+  } = useUserStore()
+
+  const [form, setForm] = useState({
+    bio: "",
+    skills: "",
+    githubUsername: "",
+    avatar: "",
+    githubUrl: "",
+    twitterUrl: "",
+    linkedinUrl: "",
+  })
+
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        bio: user.bio || "",
+        skills: user.skills?.join(", ") || "",
+        githubUsername: user.githubUsername || "",
+        avatar: user.avatar || "",
+        githubUrl: user.githubUrl || "",
+        twitterUrl: user.twitterUrl || "",
+        linkedinUrl: user.linkedinUrl || "",
+      })
+    } else {
+      fetchUserDetails(client)
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (successUpdated) {
+      setDialogOpen(true)
+      resetSuccess()
+    }
+  }, [successUpdated, resetSuccess])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleUpdate = async () => {
+    await updateUserDetails(client, {
+      bio: form.bio,
+      skills: form.skills.split(",").map((s) => s.trim()),
+      githubUsername: form.githubUsername,
+      avatar: form.avatar,
+      githubUrl: form.githubUrl,
+      twitterUrl: form.twitterUrl,
+      linkedinUrl: form.linkedinUrl,
+    })
+  }
+
+  return (
+    <div className="max-w-xl mx-auto space-y-4 p-6">
+      <h1 className="text-2xl font-bold">Edit Profile</h1>
+
+      {Object.entries(form).map(([key, value]) => (
+        <div key={key} className="space-y-2">
+          <Label htmlFor={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</Label>
+          <Input
+            id={key}
+            name={key}
+            value={value}
+            onChange={handleChange}
+            placeholder={`Enter your ${key}`}
+          />
+        </div>
+      ))}
+
+      <Button onClick={handleUpdate} className="mt-4">
+        Update Profile
+      </Button>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Profile updated successfully!</DialogTitle>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}

@@ -4,6 +4,7 @@ import SignUpPage from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Profile from "./pages/Profile";
+import EditProfilePage from "./pages/EditProfilePage";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
             <Route path="/team" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/chat" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
+            <Route path="/setting" element={<ProtectedRoute><EditProfilePage/></ProtectedRoute>}/>
           </Routes>
         </BrowserRouter>
   );

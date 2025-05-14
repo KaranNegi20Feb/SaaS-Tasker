@@ -1,17 +1,44 @@
 version: '3.4'
-services:
-    postgres:
-        container_name: tasks-db
-        image: postgres
-        ports:
-            - 5432:5432
-        volumes:
-            - postgres_data:/var/lib/postgresql/data
-        environment:
-            - POSTGRES_USER=postgres
-            - POSTGRES_DB=tasks
-            - POSTGRES_PASSWORD=tasks
-            
-volumes:
-    postgres_data:
 
+services:
+  postgres:
+    image: postgres
+    container_name: tasks-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: tasks
+      POSTGRES_DB: tasks
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: tasks-backend
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      CLIENT_ORIGIN: http://localhost:5173
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: tasks
+      DB_NAME: tasks
+    depends_on:
+      - postgres
+    command: npm run start 
+
+  frontend:
+    build: ./frontend/tasker-saas-frontend
+    container_name: tasks-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:3000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
