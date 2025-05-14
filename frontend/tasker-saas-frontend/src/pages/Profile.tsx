@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApolloClient } from "@apollo/client";
 
@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
 import { Mail, ArrowLeft } from "lucide-react";
+import { GitHubStats } from "../components/Github/GitHubStats";
 import GitHubCalendarSection from "../components/Github/GitHubCalendarSection";
 import bannerImg from "@/assets/banner.jpg";
 import SocialLinks from "../components/Social-Links/SocialLinks";
@@ -16,38 +17,40 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const client = useApolloClient();
   const { user, loading, fetchUserDetails, resetUser } = useUserStore();
-  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
 
-  // Watch for manual or external token changes
-  useEffect(() => {
-    const handleStorage = () => {
-      const newToken = localStorage.getItem("token");
-      setToken(newToken);
-    };
-
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
-
-  // Watch for local token changes (even within same tab)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newToken = localStorage.getItem("token");
-      if (newToken !== token) {
-        setToken(newToken);
-      }
-    }, 1000); // poll every 1s
-
-    return () => clearInterval(interval);
-  }, [token]);
-
-  useEffect(() => {
+  const syncUserWithToken = () => {
+    const token = localStorage.getItem("token");
     if (token) {
       fetchUserDetails(client);
     } else {
       resetUser();
     }
-  }, [token, fetchUserDetails, resetUser, client]);
+  };
+
+  useEffect(() => {
+    // Initial load
+    syncUserWithToken();
+
+    // Handle storage changes from other tabs
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "token") syncUserWithToken();
+    };
+
+    // Handle tab visibility change
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        syncUserWithToken();
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [client, fetchUserDetails, resetUser]);
 
   if (loading || !user) {
     return (
@@ -99,7 +102,6 @@ const ProfilePage = () => {
           </CardHeader>
 
           <CardContent className="space-y-8 px-8 pb-10">
-            {/* Skills */}
             <div>
               <h3 className="text-lg font-semibold mb-2">Skills</h3>
               <div className="flex flex-wrap gap-2">
