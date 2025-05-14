@@ -4,6 +4,7 @@ import {
   GET_USERS_ORGANIZATIONS,
   GET_ALL_USERS_FROM_ORGANIZATION,
   GET_TASKS_BY_IDS,
+  CREATE_TASK
 } from '../graphql/queries';
 
 const JWT_SECRET = "$KARN"; // Same secret used when issuing the token
@@ -31,6 +32,7 @@ interface TeamsState {
   activeTeam: Team | null;
   teamMembersActiveTeam: User[];
   activeTasks: Task[];
+  newTask:Task;
 
   setTeams: (teams: Team[]) => void;
   setActiveTeam: (team: Team) => void;
@@ -40,6 +42,12 @@ interface TeamsState {
   fetchTeams: (client: any) => Promise<void>;
   fetchTeamMembers: (client: any, teamName: string) => Promise<void>;
   fetchTasks: (client: any) => Promise<void>;
+  createTask: (
+      client: any,
+      title: string,
+      description: string,
+      organizationId: string
+    ) => Promise<void>;
 }
 
 export const useTeamsStore = create<TeamsState>((set, get) => ({
@@ -47,6 +55,11 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
   activeTeam: null,
   teamMembersActiveTeam: [],
   activeTasks: [],
+  newTask: {
+    title: '',
+    description: '',
+    status: 'PENDING',
+  },
 
   setTeams: (teams) => set({ teams }),
   setActiveTeam: (team) => set({ activeTeam: team }),
@@ -119,5 +132,39 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
     } catch (err) {
       console.error("Error fetching tasks:", err);
     }
+  },
+
+  createTask: async (client, title, description) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('No token');
+
+  const { id: userId } = jwtDecode<{ id: string }>(token);
+  const organizationId = get().activeTeam?.id;
+  if (!organizationId) return;
+
+  try {
+    const { data } = await client.mutate({
+      mutation: CREATE_TASK,
+      variables: {
+        title,
+        description,
+        organizationId,
+        status: 'PENDING',
+        userId,
+      },
+    });
+
+    // Set the new task data to Zustand state
+    set({ newTask: data.createTask }); // Assuming the mutation returns the task under `createTask` key
+
+    // Refresh the active tasks
+    await get().fetchTasks(client); // 🔁 refresh local tasks
+  } catch (err) {
+    console.error("Error creating task:", err);
   }
+}
+
+
+
+
 }));

@@ -1,3 +1,3 @@
 export const queries=`
-    getAllRequests:[Request!]!
+    getAllRequests(adminId:String!):[Request!]!
 `
