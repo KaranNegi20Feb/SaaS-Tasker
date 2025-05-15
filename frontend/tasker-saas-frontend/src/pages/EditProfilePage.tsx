@@ -17,8 +17,6 @@ export default function ProfileEditor() {
     updateUserDetails,
     fetchUserDetails,
     resetDetails, // Add resetDetails here
-    successUpdated,
-    resetSuccess,
   } = useUserStore()
 
   const [form, setForm] = useState({
