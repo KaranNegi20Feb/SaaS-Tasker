@@ -1,14 +1,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import {Loader2} from "lucide-react"
 import { useUserStore } from "../store/useUserStore"
 import { useApolloClient } from "@apollo/client"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog"
+import { toast } from "sonner";
 import { Label } from "../components/ui/label"
 
 export default function ProfileEditor() {
+  const [loading, setLoading] = useState(false);
   const client = useApolloClient()
   const {
     user,
@@ -28,8 +30,6 @@ export default function ProfileEditor() {
     twitterUrl: "",
     linkedinUrl: "",
   })
-
-  const [dialogOpen, setDialogOpen] = useState(false)
 
   // Check for token and user
   useEffect(() => {
@@ -64,18 +64,15 @@ export default function ProfileEditor() {
     }
   }, [user])
 
-  useEffect(() => {
-    if (successUpdated) {
-      setDialogOpen(true)
-      resetSuccess()
-    }
-  }, [successUpdated, resetSuccess])
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
   const handleUpdate = async () => {
+  setLoading(true);
+  const toastId = toast.loading("Updating your profile...");
+
+  try {
     await updateUserDetails(client, {
       bio: form.bio,
       skills: form.skills.split(",").map((s) => s.trim()),
@@ -84,8 +81,20 @@ export default function ProfileEditor() {
       githubUrl: form.githubUrl,
       twitterUrl: form.twitterUrl,
       linkedinUrl: form.linkedinUrl,
-    })
+    });
+
+    toast.success("Profile updated successfully!", {
+      id: toastId,
+    });
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to update profile.", {
+      id: toastId,
+    });
+  } finally {
+    setLoading(false);
   }
+};
 
   return (
     <div className="max-w-xl mx-auto space-y-4 p-6">
@@ -104,17 +113,16 @@ export default function ProfileEditor() {
         </div>
       ))}
 
-      <Button onClick={handleUpdate} className="mt-4">
-        Update Profile
+      <Button
+        onClick={handleUpdate}
+        disabled={loading}
+        className="btn-primary flex items-center justify-center">
+        {loading ? (
+        <Loader2 className="w-5 h-5 animate-spin" />
+        ) : (
+        "Update Profile"
+        )}
       </Button>
-
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Profile updated successfully!</DialogTitle>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

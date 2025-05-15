@@ -137,64 +137,73 @@ export default function DashboardHome() {
               </DialogContent>
             </Dialog>
             <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
-  <DialogTrigger asChild>
-    <Button variant="secondary">Join Organization</Button>
-  </DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Join an Organization</DialogTitle>
-    </DialogHeader>
-    <input
-      className="w-full border p-2 rounded mt-2"
-      placeholder="Enter organization ID"
-      value={joinOrgId}
-      onChange={(e) => setJoinOrgId(e.target.value)}
-    />
-    <Button onClick={handleJoinOrganization} disabled={joinLoading}>
-      {joinLoading ? "Joining..." : "Join"}
-    </Button>
-  </DialogContent>
-</Dialog>
-
+              <DialogTrigger asChild>
+                <Button variant="secondary">Join Organization</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Join an Organization</DialogTitle>
+                </DialogHeader>
+                <input
+                  className="w-full border p-2 rounded mt-2"
+                  placeholder="Enter organization ID"
+                  value={joinOrgId}
+                  onChange={(e) => setJoinOrgId(e.target.value)}
+                />
+                <Button onClick={handleJoinOrganization} disabled={joinLoading}>
+                  {joinLoading ? "Joining..." : "Join"}
+                </Button>
+              </DialogContent>
+            </Dialog>
           </div>
+        </CardContent>
+      </Card>
+      {/* Requests to Join Your Organization */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Requests to Join Your Organization</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1 text-sm">
+          {joinLoading ? (
+            <p className="text-muted-foreground">Loading requests...</p>
+          ) : requests.length === 0 ? (
+            <p className="text-muted-foreground">No join requests yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {requests.map((req) => (
+                <li
+                  key={req.id}
+                  className="flex flex-row items-center justify-between gap-3 border border-gray-200 p-4 rounded-lg"
+                >
+                  <div className="min-w-[60%]">
+                    <span className="font-semibold text-gray-800 truncate block max-w-xs" title={req.name}>
+                      {req.name}
+                    </span>
+                  </div>
+                  <div className="flex space-x-1">
+                    <Button
+                      className="border border-green-600 bg-black hover:bg-white hover:text-black"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => acceptRequest(client, req.id)}
+                    >
+                      <Check className="text-green-600 w-5 h-5" />
+                    </Button>
 
-<Card className="w-full">
-  <CardHeader>
-    <CardTitle className="text-base text-gray-800">
-      Requests to Join Your Organization
-    </CardTitle>
-  </CardHeader>
+                    <Button
+                      className="border border-red-600 bg-black hover:bg-white hover:text-black"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => rejectRequest(client, req.id)}
+                    >
+                      <X className="text-red-600 w-5 h-5" />
+                    </Button>
 
-  <CardContent className="space-y-1 text-sm">
-    {joinLoading ? (
-      <p className="text-muted-foreground">Loading requests...</p>
-    ) : requests.length === 0 ? (
-      <p className="text-muted-foreground">No join requests yet.</p>
-    ) : (
-      <ul className="space-y-3">
-        {requests.map((req) => (
-          <li
-            key={req.id}
-            className="flex items-center justify-between border border-gray-200 p-3 rounded-lg"
-          >
-            <div>
-              <span className="font-semibold text-gray-800">{req.name}</span>{" "}
-              wants to join.
-            </div>
-            <div className="flex space-x-2">
-              <Button variant="ghost" size="icon" onClick={() => acceptRequest(client, req.id)}>
-                <Check className="text-green-600 w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon"   onClick={() => rejectRequest(client, req.id)}>
-                <X className="text-red-600 w-5 h-5" />
-              </Button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    )}
-  </CardContent>
-</Card>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
     </div>

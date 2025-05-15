@@ -4,6 +4,8 @@ import './index.css'
 import App from './App.tsx'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Toaster } from 'sonner';
+
 
 const client = new ApolloClient({
   uri: import.meta.env.VITE_API_URL || 'http://localhost:3000/graphql',
@@ -17,6 +19,7 @@ createRoot(document.getElementById('root')!).render(
     <GoogleOAuthProvider clientId={clientId}>
       <ApolloProvider client={client}>
         <App />
+        <Toaster position="bottom-center" richColors />
       </ApolloProvider>
     </GoogleOAuthProvider>
   </StrictMode>,
