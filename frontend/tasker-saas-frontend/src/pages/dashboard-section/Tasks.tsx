@@ -66,7 +66,7 @@ const columns: ColumnDef<Task>[] = [
 ]
 
 export default function TasksPage() {
-  const { activeTeam, activeTasks, fetchTasks, fetchTeams, fetchTeamMembers,newTask } = useTeamsStore()
+  const { activeTeam, activeTasks,createTask, fetchTasks, fetchTeams, fetchTeamMembers,newTask } = useTeamsStore()
   const client = useApolloClient()
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function TasksPage() {
     if (activeTeam) {
       fetchTasks(client)
     }
-  }, [activeTeam, fetchTasks, fetchTeamMembers, client])
+  }, [activeTeam, fetchTasks, createTask,fetchTeamMembers, client])
 
   useEffect(() => {
     if (newTask?.title) { 

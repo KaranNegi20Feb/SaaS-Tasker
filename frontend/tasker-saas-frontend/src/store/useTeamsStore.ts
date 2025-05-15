@@ -132,7 +132,7 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
     }
   },
 
-  createTask: async (client, title, description) => {
+ createTask: async (client, title, description) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('No token');
 
@@ -152,15 +152,17 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
       },
     });
 
-    // Set the new task data to Zustand state
-    set({ newTask: data.createTask }); // Assuming the mutation returns the task under `createTask` key
+    const newTask = data.createTask;
 
-    // Refresh the active tasks
-    await get().fetchTasks(client); // 🔁 refresh local tasks
+    // Append new task to the current activeTasks list
+    set((state) => ({
+      activeTasks: [...state.activeTasks, newTask],
+    }));
   } catch (err) {
     console.error("Error creating task:", err);
   }
 }
+
 
 
 
