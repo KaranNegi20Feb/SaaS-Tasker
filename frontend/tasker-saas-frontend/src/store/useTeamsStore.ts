@@ -7,8 +7,6 @@ import {
   CREATE_TASK
 } from '../graphql/queries';
 
-const JWT_SECRET = "$KARN"; // Same secret used when issuing the token
-
 interface User {
   id: string;
   firstName: string;

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { useLazyQuery, gql } from "@apollo/client";
+import { useLazyQuery} from "@apollo/client";
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import { GET_USER_TOKEN, GET_USER_TOKEN_WITH_GOOGLE } from "../graphql/queries";
