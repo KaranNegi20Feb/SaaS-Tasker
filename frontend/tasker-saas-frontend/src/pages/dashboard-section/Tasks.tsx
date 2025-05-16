@@ -70,11 +70,8 @@ export default function TasksPage() {
   const client = useApolloClient()
 
   useEffect(() => {
-    fetchTeams(client)
-  }, [client, fetchTeams])
-
-  useEffect(() => {
     if (activeTeam) {
+      fetchTeams(client)
       fetchTasks(client)
     }
   }, [activeTeam, fetchTasks, createTask,fetchTeamMembers, client])

@@ -14,7 +14,7 @@ import { useTeamsStore } from "../../store/useTeamsStore";
 export default function DashboardHome() {
   const client = useApolloClient();
   const { createOrganization, loading } = useOrgStore();
-  const { fetchTasks, pending, inprogress, activeTasks} = useTeamsStore();
+  const { fetchTasks,activeTeam, pending, inprogress, activeTasks} = useTeamsStore();
   const {requests, fetchRequests,sendJoinRequest,rejectRequest,acceptRequest, loading: joinLoading } = useRequestStore();
 
   const handleJoinOrganization = async () => {
@@ -40,9 +40,12 @@ export default function DashboardHome() {
   };
 
   useEffect(() => {
-    fetchTasks(client);
+    if(activeTeam){
+      fetchTasks(client);
     fetchRequests(client);
-  }, [client]);
+    }
+  },[client,activeTasks]);
+
   console.log("Fetched Requests:", requests);
 
 
