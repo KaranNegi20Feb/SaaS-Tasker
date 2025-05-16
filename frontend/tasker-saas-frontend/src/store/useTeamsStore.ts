@@ -27,6 +27,8 @@ interface Team {
 
 interface TeamsState {
   teams: Team[];
+  pending: number;
+  inprogress: number;
   activeTeam: Team | null;
   teamMembersActiveTeam: User[];
   activeTasks: Task[];
@@ -51,6 +53,10 @@ interface TeamsState {
 export const useTeamsStore = create<TeamsState>((set, get) => ({
   teams: [],
   activeTeam: null,
+
+  pending: 0,
+  inprogress: 0,
+
   teamMembersActiveTeam: [],
   activeTasks: [],
   newTask: {
@@ -108,11 +114,10 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
   },
 
   fetchTasks: async (client) => {
-    const token = localStorage.getItem("token");
     const state = get();
     const organizationId = state.activeTeam?.id;
 
-    if (!token || !organizationId) {
+    if (!organizationId) {
       console.warn("Missing token or organization ID");
       return;
     }
@@ -122,8 +127,14 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
         query: GET_TASKS_BY_IDS,
         variables: { organizationId },
       });
+      console.log(data)
+      const task:Task[]= data.getTaskByCreds
+      console.log("task are:",task)
+      const pending = task.filter((t) => t.status === 'PENDING').length;
+      const inprogress = task.filter((t) => t.status === 'IN_PROGRESS').length;
+      console.log(pending,inprogress)
+      set({ activeTasks:task, pending, inprogress });
 
-      set({ activeTasks: data.getTaskByCreds });
     } catch (err) {
       console.error("Error fetching tasks:", err);
     }

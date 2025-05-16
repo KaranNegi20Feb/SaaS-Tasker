@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useApolloClient } from "@apollo/client";
-import { useTaskStore } from "../../store/useTasksStore";
 import { useOrgStore } from "../../store/useOrgStore";
 import { useRequestStore } from "../../store/useRequestStore";
 
@@ -10,11 +9,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "../../components/ui/button";
 
 import { Clock, Loader2, CheckCircle } from "lucide-react";
+import { useTeamsStore } from "../../store/useTeamsStore";
 
 export default function DashboardHome() {
   const client = useApolloClient();
   const { createOrganization, loading } = useOrgStore();
-  const { fetchTasks, pending, inprogress, tasks } = useTaskStore();
+  const { fetchTasks, pending, inprogress, activeTasks} = useTeamsStore();
   const {requests, fetchRequests,sendJoinRequest,rejectRequest,acceptRequest, loading: joinLoading } = useRequestStore();
 
   const handleJoinOrganization = async () => {
@@ -66,11 +66,11 @@ export default function DashboardHome() {
             <CardTitle className="text-lg">All Recent Tasks</CardTitle>
           </CardHeader>
           <CardContent>
-            {tasks.length === 0 ? (
+            {activeTasks.length === 0 ? (
               <p className="text-sm text-muted-foreground">No recent activity.</p>
             ) : (
               <ul className="space-y-2">
-                {tasks.slice(0, 5).map((task, idx) => (
+                {activeTasks.slice(0, 5).map((task, idx) => (
                   <li
                     key={idx}
                     className="flex items-center space-x-3 px-4 py-2 rounded-md shadow-sm"
