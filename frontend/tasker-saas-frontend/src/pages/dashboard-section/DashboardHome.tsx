@@ -40,11 +40,12 @@ export default function DashboardHome() {
   };
 
   useEffect(() => {
-    if(activeTeam){
-      fetchTasks(client);
+  if (activeTeam) {
+    fetchTasks(client);
     fetchRequests(client);
-    }
-  },[client,activeTasks]);
+  }
+}, [activeTeam]);
+
 
   console.log("Fetched Requests:", requests);
 
