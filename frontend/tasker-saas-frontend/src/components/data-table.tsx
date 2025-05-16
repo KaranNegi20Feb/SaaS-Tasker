@@ -2,6 +2,7 @@
 import { useTeamsStore } from "../store/useTeamsStore"
 import { useApolloClient } from "@apollo/client"
 import * as React from "react"
+import { toast } from "sonner";
 import {
   flexRender,
   getCoreRowModel,
@@ -25,6 +26,7 @@ import {
 import { Label } from "../components/ui/label"
 import { Input } from "../components/ui/input"
 import { Button } from "../components/ui/button"
+import { Loader2 } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -50,6 +52,26 @@ export function DataTable<TData, TValue>({
   const [description, setDescription] = React.useState("")
   const client = useApolloClient()
   const { activeTeam,createTask } = useTeamsStore()
+  const [loading, setLoading] = React.useState(false)
+
+  const handleCreateUser = async () => {
+    const toastId = toast.loading("Updating your task...");
+    try {
+      setLoading(true);
+      if (activeTeam) {
+        await createTask(client, title, description, activeTeam.id);
+      }
+      setDescription("");
+      setTitle("");
+      toast.success("Task created successfully!", { id: toastId });
+    } catch (err) {
+      toast.error("Failed to create task.", { id: toastId });
+    } finally {
+      setLoading(false);
+      setDialogOpen(false);
+    }
+  };
+
 
 
   const table = useReactTable({
@@ -113,17 +135,11 @@ export function DataTable<TData, TValue>({
 
             <DialogFooter>
               <Button
-                onClick={async () => {
-                if (activeTeam) {
-                  await createTask(client, title, description, activeTeam.id)
-                } else {
-                  console.error("No active team selected.")
-                }
-                setDialogOpen(false)
-                setTitle("")
-                setDescription("")
-              }}>
-              Save
+                disabled={loading}
+                onClick={handleCreateUser}>
+                  {loading?( <Loader2 className="w-5 h-5 animate-spin" />)
+                  :("Save")}
+              
               </Button>
 
             </DialogFooter>
