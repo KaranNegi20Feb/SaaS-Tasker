@@ -1,5 +1,5 @@
 export const queries=`
     getAllTasks:[Task!]!
-    getTaskByCreds(userId: String!, organizationId: String!): [Task!]!
+    getTaskByCreds(organizationId: String!): [Task!]!
     getAllTasksById(userId:String!):[Task!]!
 `

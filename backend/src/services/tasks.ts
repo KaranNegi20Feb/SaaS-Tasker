@@ -37,11 +37,9 @@ class TaskService {
         });
     }
 
-    public static async getTaskByCredentials(payload: { userId: string, organizationId: string }) {
-        const { userId, organizationId } = payload;
+    public static async getTaskByCredentials({organizationId}: { organizationId: string }) {
         const tasks = await prismaClient.task.findMany({
             where: {
-            userId,
             organizationId
             }
         });

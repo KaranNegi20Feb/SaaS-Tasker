@@ -46,11 +46,12 @@ query GetAllUsersfromOrganization($name: String!) {
 `
 
 export const GET_TASKS_BY_IDS=gql`
-query GetTaskByCreds($userId: String!, $organizationId: String!) {
-  getTaskByCreds(userId: $userId, organizationId: $organizationId) {
-    description
-    status
+query GetTaskByCreds($organizationId: String!) {
+  getTaskByCreds(organizationId: $organizationId) {
     title
+    description
+    adminId
+    status
   }
 }
 `

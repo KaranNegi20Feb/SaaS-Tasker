@@ -118,12 +118,9 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
     }
 
     try {
-      const decoded = jwtDecode<{ id: string; email: string }>(token);
-      const userId = decoded.id;
-
       const { data } = await client.query({
         query: GET_TASKS_BY_IDS,
-        variables: { userId, organizationId },
+        variables: { organizationId },
       });
 
       set({ activeTasks: data.getTaskByCreds });
