@@ -46,6 +46,25 @@ class TaskService {
         return tasks;
     }
 
+    public static async deleteTaskById({taskId}:{taskId:string}){
+        await prismaClient.task.delete({
+            where:{id:taskId}
+        })
+        return "Task Deleted Successfully"
+    }
+
+    public static async editTaskById({taskId,title,description,status}:{taskId:string,title:string,description:string,status:string}){
+        await prismaClient.task.update({
+            where:{id:taskId},
+            data: {
+                title,
+                description,
+                status,
+            }
+        })
+        return "Edited task successfully"
+    }
+
 
     public static getAllTasks() {
         return prismaClient.task.findMany({
