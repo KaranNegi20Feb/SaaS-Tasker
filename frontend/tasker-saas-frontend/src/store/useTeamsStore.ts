@@ -5,7 +5,8 @@ import {
   GET_ALL_USERS_FROM_ORGANIZATION,
   GET_TASKS_BY_IDS,
   CREATE_TASK,
-  Delete_TASK_BY_ID
+  Delete_TASK_BY_ID,
+  EDIT_TASK_BY_ID
 } from '../graphql/queries';
 
 interface User {
@@ -53,6 +54,7 @@ interface TeamsState {
     ) => Promise<void>;
   taskVersion: number;
   incrementTaskVersion: () => void;
+  editTask:(client:any,status:string, taskId:string,title:string,description:string)=>Promise<void>
 }
 
 export const useTeamsStore = create<TeamsState>((set, get) => ({
@@ -76,7 +78,6 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
   setTeamMembersActiveTeam: (users) => set({ teamMembersActiveTeam: users }),
   setActiveTasks: (tasks) => set({ activeTasks: tasks }),
   incrementTaskVersion: () =>{set((state) => ({ taskVersion: state.taskVersion + 1 }))},
-
   fetchTeams: async (client) => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -190,6 +191,18 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
   } catch (err) {
     console.error("Error creating task:", err);
   }
-  }
+  },
 
-}));
+  editTask:async(client,title,description,taskId,status)=>{
+    try{
+        await client.mutate({
+        mutation:EDIT_TASK_BY_ID,
+        variables:{title,description,taskId,status}
+      })
+    }
+    catch(error){
+      console.error("error editing task",error)
+    }
+  }
+}
+));

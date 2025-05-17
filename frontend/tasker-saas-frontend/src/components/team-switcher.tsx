@@ -61,15 +61,8 @@ export function TeamSwitcher() {
 
   return (
     <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground relative"
-            >
-              {/* Copy Icon */}
-              <TooltipProvider>
+      <SidebarMenuItem className='flex items-center justify-center ml-2'>
+        <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
@@ -84,7 +77,13 @@ export function TeamSwitcher() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              className="hover:bg-transparent hover:text-inherit data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground relative"
+            >
+              {/* Copy Icon */}
               {/* Team Info */}
               <div className="grid flex-1 text-left text-sm leading-tight ml-3">
                 <span className="truncate font-semibold">

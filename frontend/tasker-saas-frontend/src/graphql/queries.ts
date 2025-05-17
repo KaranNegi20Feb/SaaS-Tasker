@@ -150,7 +150,7 @@ mutation Mutation($taskId: String!) {
 `
 
 export const EDIT_TASK_BY_ID=gql`
-mutation Mutation($taskId: String!) {
-  editTask(taskId: $taskId)
+mutation EditTask($taskId: String!, $title: String, $description: String, $status: String) {
+  editTask(taskId: $taskId, title: $title, description: $description, status: $status)
 }
 `

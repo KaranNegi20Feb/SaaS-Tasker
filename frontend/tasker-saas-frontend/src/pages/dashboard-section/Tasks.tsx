@@ -1,11 +1,16 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useApolloClient } from "@apollo/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTable } from "../../components/data-table"
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { Button } from "../../components/ui/button"
+import { Input } from "../../components/ui/input"
+import { Label } from "../../components/ui/label"
+import { Select ,SelectItem,SelectTrigger,SelectValue,SelectContent} from "../../components/ui/select"
+import { Textarea } from "../../components/ui/textarea"
+import { Dialog ,DialogContent,DialogHeader,DialogTitle, DialogFooter} from "../../components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -23,7 +28,10 @@ interface Task {
 }
 
 export default function TasksPage() {
-  const { activeTeam, activeTasks,taskVersion, deleteTask, createTask, fetchTasks, fetchTeams, fetchTeamMembers, newTask } = useTeamsStore()
+  const { activeTeam, editTask, activeTasks,taskVersion, deleteTask, createTask, fetchTasks, fetchTeams, fetchTeamMembers, newTask } = useTeamsStore()
+  const [open,setOpen]=useState(false);
+  const [editData, setEditData] = useState<Task | null>(null)
+
   const client = useApolloClient()
 
   useEffect(() => {
@@ -58,9 +66,10 @@ export default function TasksPage() {
     }
   }
 
-  const handleEdit = (task: Task) => {
-    console.log("Edit Task", task)
-  }
+  const handleEdit = async (task: Task) => {
+  setEditData(task);
+  setOpen(true);
+};
 
   const columns: ColumnDef<Task>[] = [
     {
@@ -110,9 +119,78 @@ export default function TasksPage() {
   ]
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Tasks</h1>
-      <DataTable columns={columns} data={activeTasks} />
-    </div>
-  )
+  <div className="p-6">
+    <h1 className="text-2xl font-bold mb-4">Tasks</h1>
+    <DataTable columns={columns} data={activeTasks} />
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Edit Task</DialogTitle>
+        </DialogHeader>
+
+        {editData && (
+          <form
+            onSubmit={async (e) => {
+              console.log(editData)
+              e.preventDefault();
+              try {
+                await editTask(
+                  client,
+                  editData.title,
+                  editData.description,
+                  editData.id,
+                  editData.status
+                );
+                fetchTasks(client);
+                setOpen(false);
+              } catch (err) {
+                console.error("Failed to edit task", err);
+              }
+            }}
+            className="space-y-4"
+          >
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                value={editData.title}
+                onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={editData.description}
+                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={editData.status}
+                onValueChange={(value) => setEditData({ ...editData, status: value })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PENDING">PENDING</SelectItem>
+                  <SelectItem value="COMPLETED">COMPLETED</SelectItem>
+                  <SelectItem value="IN_PROGRESS">IN_PROGRESS</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <DialogFooter>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
+  </div>
+);
 }
