@@ -4,7 +4,8 @@ import {
   GET_USERS_ORGANIZATIONS,
   GET_ALL_USERS_FROM_ORGANIZATION,
   GET_TASKS_BY_IDS,
-  CREATE_TASK
+  CREATE_TASK,
+  Delete_TASK_BY_ID
 } from '../graphql/queries';
 
 interface User {
@@ -15,6 +16,7 @@ interface User {
 }
 
 interface Task {
+  id:string;
   title: string;
   description: string;
   status: string;
@@ -33,12 +35,13 @@ interface TeamsState {
   teamMembersActiveTeam: User[];
   activeTasks: Task[];
   newTask:Task;
+  
 
   setTeams: (teams: Team[]) => void;
   setActiveTeam: (team: Team) => void;
   setTeamMembersActiveTeam: (users: User[]) => void;
   setActiveTasks: (tasks: Task[]) => void;
-
+  deleteTask:(client:any,id:string)=>Promise<void>;
   fetchTeams: (client: any) => Promise<void>;
   fetchTeamMembers: (client: any, teamName: string) => Promise<void>;
   fetchTasks: (client: any) => Promise<void>;
@@ -48,18 +51,21 @@ interface TeamsState {
       description: string,
       organizationId: string
     ) => Promise<void>;
+  taskVersion: number;
+  incrementTaskVersion: () => void;
 }
 
 export const useTeamsStore = create<TeamsState>((set, get) => ({
   teams: [],
   activeTeam: null,
-
+  taskVersion: 0,
   pending: 0,
   inprogress: 0,
 
   teamMembersActiveTeam: [],
   activeTasks: [],
   newTask: {
+    id:'',
     title: '',
     description: '',
     status: 'PENDING',
@@ -69,6 +75,7 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
   setActiveTeam: (team) => set({ activeTeam: team }),
   setTeamMembersActiveTeam: (users) => set({ teamMembersActiveTeam: users }),
   setActiveTasks: (tasks) => set({ activeTasks: tasks }),
+  incrementTaskVersion: () =>{set((state) => ({ taskVersion: state.taskVersion + 1 }))},
 
   fetchTeams: async (client) => {
     const token = localStorage.getItem("token");
@@ -126,6 +133,7 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
       const { data } = await client.query({
         query: GET_TASKS_BY_IDS,
         variables: { organizationId },
+        fetchPolicy: "network-only",
       });
       console.log(data)
       const task:Task[]= data.getTaskByCreds
@@ -139,6 +147,19 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
       console.error("Error fetching tasks:", err);
     }
   },
+
+  deleteTask: async (client, taskId) => {
+  try {
+    await client.mutate({
+      mutation: Delete_TASK_BY_ID,
+      variables: { taskId },
+    });
+    get().incrementTaskVersion();
+  } catch (error) {
+    console.error("Error deleting task:", error);
+  }
+},
+
 
  createTask: async (client, title, description) => {
   const token = localStorage.getItem('token');
@@ -169,10 +190,6 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
   } catch (err) {
     console.error("Error creating task:", err);
   }
-}
-
-
-
-
+  }
 
 }));

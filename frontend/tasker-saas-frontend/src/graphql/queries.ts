@@ -50,7 +50,7 @@ query GetTaskByCreds($organizationId: String!) {
   getTaskByCreds(organizationId: $organizationId) {
     title
     description
-    adminId
+    id
     status
   }
 }
@@ -139,5 +139,18 @@ query Query($email: String!) {
 export const UPDATE_USER_DETAILS=gql`
 mutation Mutation($email: String!, $bio: String, $skills: [String], $githubUsername: String, $avatar: String, $githubUrl: String, $twitterUrl: String, $linkedinUrl: String) {
   updateUserDetails(email: $email, bio: $bio, skills: $skills, githubUsername: $githubUsername, avatar: $avatar, githubUrl: $githubUrl, twitterUrl: $twitterUrl, linkedinUrl: $linkedinUrl)
+}
+`
+
+
+export const Delete_TASK_BY_ID=gql`
+mutation Mutation($taskId: String!) {
+  deleteTask(taskId: $taskId)
+}
+`
+
+export const EDIT_TASK_BY_ID=gql`
+mutation Mutation($taskId: String!) {
+  editTask(taskId: $taskId)
 }
 `
