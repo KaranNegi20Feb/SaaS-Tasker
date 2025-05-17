@@ -1,4 +1,4 @@
-import React from 'react';
+import { DotBackgroundDemo } from "../components/ui/DotBackgroundDemo";
 import { motion } from 'framer-motion';
 import BlurText from '../components/ui/BlurText';
 import { Button } from '../components/ui/button';
@@ -17,84 +17,148 @@ const features: Feature[] = [
   { id: 4, title: "Dashboard with feature to accept and reject", description: "Manage tasks and requests with an intuitive dashboard for approvals." },
 ];
 
+// Animation variants
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay, duration: 0.6, ease: 'easeOut' }
+  })
+};
+
 const cardVariants = {
   hidden: { opacity: 0, scale: 0.8 },
   visible: (i: number) => ({
     opacity: 1,
     scale: 1,
-    transition: { delay: i * 0.15, duration: 0.4 },
+    transition: { delay: i * 0.15 + 1.6, duration: 0.4 }, // Cards after everything else
   }),
 };
 
-const HeroPage: React.FC = () => {
+const HeroPage2 = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col items-center py-20 px-6 relative overflow-hidden">
-      {/* Decorative Background Squares */}
-      <div className="absolute top-20 left-10 w-40 h-40 bg-purple-700 rounded-3xl opacity-30 blur-3xl animate-blob animation-delay-2000 mix-blend-multiply" />
-      <div className="absolute top-40 right-20 w-56 h-56 bg-indigo-600 rounded-3xl opacity-25 blur-3xl animate-blob animation-delay-4000 mix-blend-multiply" />
-      <div className="absolute bottom-20 left-1/3 w-64 h-64 bg-pink-700 rounded-3xl opacity-20 blur-3xl animate-blob animation-delay-6000 mix-blend-multiply" />
+    <DotBackgroundDemo>
+      <div className="p-12 flex flex-col items-center justify-center mt-10 md:mt-0 w-full max-w-7xl p-5">
 
-      {/* Main Header */}
-      <BlurText
-        text="MicroTeams"
-        delay={250}
-        animateBy="words"
-        direction="bottom"
-        className="text-6xl font-extrabold text-white mb-6 select-none relative z-10"
-      />
-
-      {/* Short description */}
-      <p className="max-w-xl text-center text-gray-300 mb-10 text-lg relative z-10">
-        MicroTeams is a collaborative platform designed to empower small teams to organize, communicate, and deliver projects efficiently.
-      </p>
-
-      {/* Buttons */}
-      <div className="flex space-x-6 mb-16 relative z-10">
-        <Button
-          variant="default"
-          onClick={() => navigate('/login')}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+        {/* MicroTeams heading */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          custom={0.2}
         >
-          Login
-        </Button>
+          <BlurText
+            text="MicroTeams"
+            delay={250}
+            animateBy="words"
+            direction="bottom"
+            className="text-6xl font-extrabold text-white mb-6 select-none relative z-10 md:text-8xl"
+          />
+        </motion.div>
 
-        <Button
-          variant="outline"
-          onClick={() => navigate('/signup')}
-          className="border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white"
+        {/* Description */}
+        <motion.p
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          custom={0.6}
+          className="max-w-xl text-center text-gray-300 mb-10 text-lg relative z-10"
         >
-          Signup
-        </Button>
-      </div>
+          A collaborative platform designed to empower small teams to organize, communicate, and deliver projects efficiently.
+        </motion.p>
 
-      {/* Features Heading */}
-<BlurText
-        text="Features"
-        delay={250}
-        animateBy="words"
-        direction="bottom"
-        className="text-4xl font-extrabold text-white mb-6 select-none relative z-10"
-      />
-      {/* Features Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl w-full relative z-10">
-        {features.map((feature, i) => (
-          <motion.div
-            key={feature.id}
-            custom={i}
-            initial="hidden"
-            animate="visible"
-            variants={cardVariants}
-            className="bg-gray-800 rounded-xl shadow-lg p-6 cursor-default hover:shadow-indigo-500/50 transition-shadow duration-300"
-          >
-            <h3 className="text-xl font-semibold text-indigo-400 mb-2">{feature.title}</h3>
-            <p className="text-gray-300">{feature.description}</p>
-          </motion.div>
-        ))}
+        {/* Buttons */}
+        <div className="flex justify-center items-center w-full">
+  <motion.div
+    initial="hidden"
+    animate="visible"
+    variants={fadeUp}
+    custom={1.0}
+    className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6 mb-16 relative z-10 w-full sm:w-auto"
+  >
+    <Button
+      onClick={() => navigate('/login')}
+      className="
+        w-full sm:w-48
+        backdrop-blur-md bg-black/30 border border-indigo-500
+        text-indigo-300 font-semibold px-6 py-3 sm:px-10 rounded-xl
+        shadow-[0_0_8px_rgba(99,102,241,0.6)]
+        hover:shadow-[0_0_20px_rgba(99,102,241,0.8)]
+        hover:border-indigo-400
+        transition duration-300 ease-in-out transform hover:scale-105
+      "
+    >
+      Login
+    </Button>
+
+    <Button
+      onClick={() => navigate('/signup')}
+      className="
+        w-full sm:w-48
+        backdrop-blur-md bg-black/30 border border-pink-500
+        text-pink-300 font-semibold px-6 py-3 sm:px-10 rounded-xl
+        shadow-[0_0_8px_rgba(219,39,119,0.6)]
+        hover:shadow-[0_0_20px_rgba(219,39,119,0.8)]
+        hover:border-pink-400
+        transition duration-300 ease-in-out transform hover:scale-105
+      "
+    >
+      Signup
+    </Button>
+  </motion.div>
+</div>
+
+
+        {/* Features heading */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          custom={1.3}
+        >
+          <BlurText
+            text="Features"
+            delay={250}
+            animateBy="words"
+            direction="bottom"
+            className="text-4xl mt-2 font-extrabold text-white mb-6 select-none relative z-10"
+          />
+        </motion.div>
+
+        {/* Feature cards */}
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl w-full relative z-10">
+  {features.map((feature, i) => (
+    <motion.div
+      key={feature.id}
+      custom={i}
+      initial="hidden"
+      animate="visible"
+      variants={cardVariants}
+      className="
+        rounded-2xl p-6 shadow-lg
+        bg-gradient-to-br from-gray-900/60 via-gray-800/60 to-gray-700/60
+        border border-white/10 backdrop-blur-md
+        hover:shadow-[0_0_20px_rgba(99,102,241,0.5)]
+        transition duration-300 ease-in-out transform hover:scale-[1.03]
+      "
+    >
+      <h3 className="text-lg font-bold text-indigo-400 mb-2 tracking-wide">
+  {feature.title}
+</h3>
+<p className="text-sm text-slate-200 leading-relaxed">
+  {feature.description}
+</p>
+
+    </motion.div>
+  ))}
+</div>
+
       </div>
-    </div>
+    </DotBackgroundDemo>
   );
 };
 
-export default HeroPage;
+export default HeroPage2;
