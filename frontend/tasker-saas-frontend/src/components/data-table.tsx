@@ -3,6 +3,7 @@ import { useTeamsStore } from "../store/useTeamsStore"
 import { useApolloClient } from "@apollo/client"
 import * as React from "react"
 import { toast } from "sonner";
+import { useLocation } from "react-router-dom";
 import {
   flexRender,
   getCoreRowModel,
@@ -88,7 +89,8 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   })
-  
+  const location = useLocation();
+
 
   return (
     <div className="space-y-4">
@@ -99,7 +101,7 @@ export function DataTable<TData, TValue>({
           onChange={(event) => setFiltering(event.target.value)}
           className="max-w-sm"
         />
-
+        {location.pathname === "/tasks" && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button>Add Task</Button>
@@ -144,7 +146,7 @@ export function DataTable<TData, TValue>({
 
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog>)}
       </div>
 
       <div className="rounded-md border">

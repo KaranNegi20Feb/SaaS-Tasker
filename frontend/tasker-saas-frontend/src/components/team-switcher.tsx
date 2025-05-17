@@ -61,13 +61,13 @@ export function TeamSwitcher() {
 
   return (
     <SidebarMenu>
-      <SidebarMenuItem className='flex items-center justify-center ml-2'>
+      <SidebarMenuItem className='flex items-center justify-center border rounded-md '>
         <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
                       onClick={handleCopy}
-                      className="relative z-10 bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg hover:bg-gray-700"
+                      className="relative z-10 bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg hover:bg-gray-700 ml-2"
                     >
                       {copied ? <Check className="size-4" /> : <ClipboardCopy className="size-4" />}
                     </button>
