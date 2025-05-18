@@ -5,11 +5,13 @@ import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import Profile from "./pages/Profile";
 import EditProfilePage from "./pages/EditProfilePage";
+import HeroPage from "./pages/HeroPage";
 
 const App = () => {
   return (
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<HeroPage/>}></Route>
             <Route path="/login" element={<Login/>}></Route>
             <Route path="/signup" element={<SignUpPage/>}></Route>
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}></Route>

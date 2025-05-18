@@ -4,9 +4,10 @@ import { expressMiddleware } from "@apollo/server/express4";
 import createApolloGraphqlServer from "./graphql";
 
 async function init() {
+    const allowedOrigins = ['http://localhost:5173','https://tasks-frontend-ut0n.onrender.com'];
     const app = express();
     app.use(cors({
-        origin: 'http://localhost:5173',
+        origin: allowedOrigins,
         credentials: true,
     }));
 

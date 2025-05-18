@@ -37,15 +37,32 @@ class TaskService {
         });
     }
 
-    public static async getTaskByCredentials(payload: { userId: string, organizationId: string }) {
-        const { userId, organizationId } = payload;
+    public static async getTaskByCredentials({organizationId}: { organizationId: string }) {
         const tasks = await prismaClient.task.findMany({
             where: {
-            userId,
             organizationId
             }
         });
         return tasks;
+    }
+
+    public static async deleteTaskById({taskId}:{taskId:string}){
+        await prismaClient.task.delete({
+            where:{id:taskId}
+        })
+        return "Task Deleted Successfully"
+    }
+
+    public static async editTaskById({taskId,title,description,status}:{taskId:string,title:string,description:string,status:string}){
+        await prismaClient.task.update({
+            where:{id:taskId},
+            data: {
+                title,
+                description,
+                status,
+            }
+        })
+        return "Edited task successfully"
     }
 
 

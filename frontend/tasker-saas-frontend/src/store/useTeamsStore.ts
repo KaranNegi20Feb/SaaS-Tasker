@@ -4,10 +4,10 @@ import {
   GET_USERS_ORGANIZATIONS,
   GET_ALL_USERS_FROM_ORGANIZATION,
   GET_TASKS_BY_IDS,
-  CREATE_TASK
+  CREATE_TASK,
+  Delete_TASK_BY_ID,
+  EDIT_TASK_BY_ID
 } from '../graphql/queries';
-
-const JWT_SECRET = "$KARN"; // Same secret used when issuing the token
 
 interface User {
   id: string;
@@ -17,6 +17,7 @@ interface User {
 }
 
 interface Task {
+  id:string;
   title: string;
   description: string;
   status: string;
@@ -29,16 +30,19 @@ interface Team {
 
 interface TeamsState {
   teams: Team[];
+  pending: number;
+  inprogress: number;
   activeTeam: Team | null;
   teamMembersActiveTeam: User[];
   activeTasks: Task[];
   newTask:Task;
+  
 
   setTeams: (teams: Team[]) => void;
   setActiveTeam: (team: Team) => void;
   setTeamMembersActiveTeam: (users: User[]) => void;
   setActiveTasks: (tasks: Task[]) => void;
-
+  deleteTask:(client:any,id:string)=>Promise<void>;
   fetchTeams: (client: any) => Promise<void>;
   fetchTeamMembers: (client: any, teamName: string) => Promise<void>;
   fetchTasks: (client: any) => Promise<void>;
@@ -48,14 +52,22 @@ interface TeamsState {
       description: string,
       organizationId: string
     ) => Promise<void>;
+  taskVersion: number;
+  incrementTaskVersion: () => void;
+  editTask:(client:any,status:string, taskId:string,title:string,description:string)=>Promise<void>
 }
 
 export const useTeamsStore = create<TeamsState>((set, get) => ({
   teams: [],
   activeTeam: null,
+  taskVersion: 0,
+  pending: 0,
+  inprogress: 0,
+
   teamMembersActiveTeam: [],
   activeTasks: [],
   newTask: {
+    id:'',
     title: '',
     description: '',
     status: 'PENDING',
@@ -65,7 +77,7 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
   setActiveTeam: (team) => set({ activeTeam: team }),
   setTeamMembersActiveTeam: (users) => set({ teamMembersActiveTeam: users }),
   setActiveTasks: (tasks) => set({ activeTasks: tasks }),
-
+  incrementTaskVersion: () =>{set((state) => ({ taskVersion: state.taskVersion + 1 }))},
   fetchTeams: async (client) => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -110,31 +122,47 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
   },
 
   fetchTasks: async (client) => {
-    const token = localStorage.getItem("token");
     const state = get();
     const organizationId = state.activeTeam?.id;
 
-    if (!token || !organizationId) {
+    if (!organizationId) {
       console.warn("Missing token or organization ID");
       return;
     }
 
     try {
-      const decoded = jwtDecode<{ id: string; email: string }>(token);
-      const userId = decoded.id;
-
       const { data } = await client.query({
         query: GET_TASKS_BY_IDS,
-        variables: { userId, organizationId },
+        variables: { organizationId },
+        fetchPolicy: "network-only",
       });
+      console.log(data)
+      const task:Task[]= data.getTaskByCreds
+      console.log("task are:",task)
+      const pending = task.filter((t) => t.status === 'PENDING').length;
+      const inprogress = task.filter((t) => t.status === 'IN_PROGRESS').length;
+      console.log(pending,inprogress)
+      set({ activeTasks:task, pending, inprogress });
 
-      set({ activeTasks: data.getTaskByCreds });
     } catch (err) {
       console.error("Error fetching tasks:", err);
     }
   },
 
-  createTask: async (client, title, description) => {
+  deleteTask: async (client, taskId) => {
+  try {
+    await client.mutate({
+      mutation: Delete_TASK_BY_ID,
+      variables: { taskId },
+    });
+    get().incrementTaskVersion();
+  } catch (error) {
+    console.error("Error deleting task:", error);
+  }
+},
+
+
+ createTask: async (client, title, description) => {
   const token = localStorage.getItem('token');
   if (!token) throw new Error('No token');
 
@@ -154,17 +182,27 @@ export const useTeamsStore = create<TeamsState>((set, get) => ({
       },
     });
 
-    // Set the new task data to Zustand state
-    set({ newTask: data.createTask }); // Assuming the mutation returns the task under `createTask` key
+    const newTask = data.createTask;
 
-    // Refresh the active tasks
-    await get().fetchTasks(client); // 🔁 refresh local tasks
+    // Append new task to the current activeTasks list
+    set((state) => ({
+      activeTasks: [...state.activeTasks, newTask],
+    }));
   } catch (err) {
     console.error("Error creating task:", err);
   }
+  },
+
+  editTask:async(client,title,description,taskId,status)=>{
+    try{
+        await client.mutate({
+        mutation:EDIT_TASK_BY_ID,
+        variables:{title,description,taskId,status}
+      })
+    }
+    catch(error){
+      console.error("error editing task",error)
+    }
+  }
 }
-
-
-
-
-}));
+));

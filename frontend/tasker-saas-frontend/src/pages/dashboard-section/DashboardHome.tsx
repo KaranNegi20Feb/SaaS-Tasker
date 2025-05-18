@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useApolloClient } from "@apollo/client";
-import { useTaskStore } from "../../store/useTasksStore";
 import { useOrgStore } from "../../store/useOrgStore";
 import { useRequestStore } from "../../store/useRequestStore";
 
@@ -10,11 +9,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "../../components/ui/button";
 
 import { Clock, Loader2, CheckCircle } from "lucide-react";
+import { useTeamsStore } from "../../store/useTeamsStore";
 
 export default function DashboardHome() {
   const client = useApolloClient();
   const { createOrganization, loading } = useOrgStore();
-  const { fetchTasks, pending, inprogress, tasks } = useTaskStore();
+  const { fetchTasks,activeTeam, pending, inprogress, activeTasks} = useTeamsStore();
   const {requests, fetchRequests,sendJoinRequest,rejectRequest,acceptRequest, loading: joinLoading } = useRequestStore();
 
   const handleJoinOrganization = async () => {
@@ -40,9 +40,13 @@ export default function DashboardHome() {
   };
 
   useEffect(() => {
+  if (activeTeam) {
     fetchTasks(client);
     fetchRequests(client);
-  }, [client]);
+  }
+}, [activeTeam]);
+
+
   console.log("Fetched Requests:", requests);
 
 
@@ -66,11 +70,11 @@ export default function DashboardHome() {
             <CardTitle className="text-lg">All Recent Tasks</CardTitle>
           </CardHeader>
           <CardContent>
-            {tasks.length === 0 ? (
+            {activeTasks.length === 0 ? (
               <p className="text-sm text-muted-foreground">No recent activity.</p>
             ) : (
               <ul className="space-y-2">
-                {tasks.slice(0, 5).map((task, idx) => (
+                {activeTasks.slice(0, 5).map((task, idx) => (
                   <li
                     key={idx}
                     className="flex items-center space-x-3 px-4 py-2 rounded-md shadow-sm"
@@ -137,64 +141,73 @@ export default function DashboardHome() {
               </DialogContent>
             </Dialog>
             <Dialog open={joinDialogOpen} onOpenChange={setJoinDialogOpen}>
-  <DialogTrigger asChild>
-    <Button variant="secondary">Join Organization</Button>
-  </DialogTrigger>
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>Join an Organization</DialogTitle>
-    </DialogHeader>
-    <input
-      className="w-full border p-2 rounded mt-2"
-      placeholder="Enter organization ID"
-      value={joinOrgId}
-      onChange={(e) => setJoinOrgId(e.target.value)}
-    />
-    <Button onClick={handleJoinOrganization} disabled={joinLoading}>
-      {joinLoading ? "Joining..." : "Join"}
-    </Button>
-  </DialogContent>
-</Dialog>
-
+              <DialogTrigger asChild>
+                <Button variant="secondary">Join Organization</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Join an Organization</DialogTitle>
+                </DialogHeader>
+                <input
+                  className="w-full border p-2 rounded mt-2"
+                  placeholder="Enter organization ID"
+                  value={joinOrgId}
+                  onChange={(e) => setJoinOrgId(e.target.value)}
+                />
+                <Button onClick={handleJoinOrganization} disabled={joinLoading}>
+                  {joinLoading ? "Joining..." : "Join"}
+                </Button>
+              </DialogContent>
+            </Dialog>
           </div>
+        </CardContent>
+      </Card>
+      {/* Requests to Join Your Organization */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Requests to Join Your Organization</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1 text-sm">
+          {joinLoading ? (
+            <p className="text-muted-foreground">Loading requests...</p>
+          ) : requests.length === 0 ? (
+            <p className="text-muted-foreground">No join requests yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {requests.map((req) => (
+                <li
+                  key={req.id}
+                  className="flex flex-row items-center justify-between gap-3 border border-gray-200 p-4 rounded-lg"
+                >
+                  <div className="min-w-[60%]">
+                    <span className="font-semibold text-gray-800 truncate block max-w-xs" title={req.name}>
+                      {req.name}
+                    </span>
+                  </div>
+                  <div className="flex space-x-1">
+                    <Button
+                      className="border border-green-600 bg-black hover:bg-white hover:text-black"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => acceptRequest(client, req.id)}
+                    >
+                      <Check className="text-green-600 w-5 h-5" />
+                    </Button>
 
-<Card className="w-full">
-  <CardHeader>
-    <CardTitle className="text-base text-gray-800">
-      Requests to Join Your Organization
-    </CardTitle>
-  </CardHeader>
+                    <Button
+                      className="border border-red-600 bg-black hover:bg-white hover:text-black"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => rejectRequest(client, req.id)}
+                    >
+                      <X className="text-red-600 w-5 h-5" />
+                    </Button>
 
-  <CardContent className="space-y-1 text-sm">
-    {joinLoading ? (
-      <p className="text-muted-foreground">Loading requests...</p>
-    ) : requests.length === 0 ? (
-      <p className="text-muted-foreground">No join requests yet.</p>
-    ) : (
-      <ul className="space-y-3">
-        {requests.map((req) => (
-          <li
-            key={req.id}
-            className="flex items-center justify-between border border-gray-200 p-3 rounded-lg"
-          >
-            <div>
-              <span className="font-semibold text-gray-800">{req.name}</span>{" "}
-              wants to join.
-            </div>
-            <div className="flex space-x-2">
-              <Button variant="ghost" size="icon" onClick={() => acceptRequest(client, req.id)}>
-                <Check className="text-green-600 w-5 h-5" />
-              </Button>
-              <Button variant="ghost" size="icon"   onClick={() => rejectRequest(client, req.id)}>
-                <X className="text-red-600 w-5 h-5" />
-              </Button>
-            </div>
-          </li>
-        ))}
-      </ul>
-    )}
-  </CardContent>
-</Card>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
     </div>

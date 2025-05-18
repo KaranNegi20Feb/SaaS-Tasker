@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApolloClient } from "@apollo/client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Badge } from "../components/ui/badge";
-import { Mail, ArrowLeft } from "lucide-react";
+import { Mail, ArrowLeft ,Loader2} from "lucide-react";
 import GitHubCalendarSection from "../components/Github/GitHubCalendarSection";
 import bannerImg from "@/assets/banner.jpg";
 import SocialLinks from "../components/Social-Links/SocialLinks";
@@ -51,9 +50,10 @@ const ProfilePage = () => {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <p className="text-xl font-semibold">Loading user profile...</p>
-      </div>
+      <div className="min-h-screen flex flex-col justify-center items-center gap-4">
+      <Loader2 className="w-12 h-12 text-gray-500 animate-spin" />
+      <p className="text-xl font-semibold text-gray-700">Loading user profile...</p>
+    </div>
     );
   }
 
