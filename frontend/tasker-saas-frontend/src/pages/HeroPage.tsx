@@ -55,7 +55,7 @@ const HeroPage2 = () => {
             delay={250}
             animateBy="words"
             direction="bottom"
-            className="text-6xl font-extrabold text-white mb-6 select-none relative z-10 md:text-8xl"
+            className="text-5xl font-extrabold text-white mb-6 select-none relative z-10 md:text-8xl"
           />
         </motion.div>
 
