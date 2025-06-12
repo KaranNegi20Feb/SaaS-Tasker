@@ -4,7 +4,7 @@ import { Spotlight } from "../components/ui/spotlight";
 import BlurText from "../components/ui/BlurText";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
-import { Navbar } from "../components/NavBar";
+import { Navbar } from "../components/Navbar";
 import Footer from "../components/Footer";
 import { ImageCarousel } from "../components/ImageCarousel";
 
