@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/button";
+import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
 
 export const Navbar = () => {
