@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Menu } from "lucide-react";
 
-export const NavBar = () => {
+export const NavBarTop = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 

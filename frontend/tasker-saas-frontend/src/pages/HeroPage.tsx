@@ -4,7 +4,7 @@ import { Spotlight } from "../components/ui/spotlight";
 import BlurText from "../components/ui/BlurText";
 import { Button } from "../components/ui/button";
 import { cn } from "../lib/utils";
-import {NavBar} from "../components/NavBar";
+import {NavBarTop} from "../components/NavbarTop";
 import Footer from "../components/Footer";
 import { ImageCarousel } from "../components/ImageCarousel";
 
@@ -61,7 +61,7 @@ const HeroPage2 = () => {
 
   return (
     <>
-      <NavBar/>
+      <NavBarTop/>
 
       <div className="relative flex w-full overflow-hidden bg-black/[0.96] antialiased md:items-center md:justify-center py-12">
         {/* Grid Background */}
